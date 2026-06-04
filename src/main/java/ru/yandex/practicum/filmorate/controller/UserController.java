@@ -45,7 +45,7 @@ public class UserController {
         }
         if (!users.containsKey(user.getId())) {
             log.error("Не найден пользователь с id " + user.getId());
-            throw new ValidationException("Не найден пользователь с id "+ user.getId());
+            throw new ValidationException("Не найден пользователь с id " + user.getId());
         }
 
         validateUser(user);
