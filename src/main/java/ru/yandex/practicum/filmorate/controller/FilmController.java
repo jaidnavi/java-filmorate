@@ -45,9 +45,6 @@ public class FilmController {
         return film;
     }
 
-
-
-
     // вспомогательный метод для генерации идентификатора нового фильма
     private long getNextId() {
         long currentMaxId = films.keySet()
