@@ -22,12 +22,7 @@ class FilmServiceTest {
     @Test
     void addLike_whenCorrectData_addLike() {
         // добавляем пользователя
-        User user = User.builder()
-                .email("test@yandex.ru")
-                .login("valid_login")
-                .name("kosticin")
-                .birthday(LocalDate.of(1984, 6, 6))
-                .build();
+        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
@@ -38,12 +33,7 @@ class FilmServiceTest {
 
         // добавляем фильм
 
-        Film film = Film.builder()
-                .name("Inception")
-                .description("A thief who steals corporate secrets...")
-                .releaseDate(LocalDate.of(2010, 7, 16))
-                .duration(148)
-                .build();
+        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -55,12 +45,7 @@ class FilmServiceTest {
         Long userId = createdUser.getId();
 
         // добавляем лайк
-        ResponseEntity<Void> putLikeResponse = restTemplate.exchange(
-                "/films/" + filmId + "/like/" + userId,
-                HttpMethod.PUT,
-                null,
-                Void.class
-        );
+        ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + userId, HttpMethod.PUT, null, Void.class);
 
         assertEquals(200, putLikeResponse.getStatusCode().value());
         ResponseEntity<Film> getFilmResponse = restTemplate.getForEntity("/films/" + filmId, Film.class);
@@ -74,12 +59,7 @@ class FilmServiceTest {
     @Test
     void addLike_whenUnknownFilm_getError() {
         // добавляем пользователя
-        User user = User.builder()
-                .email("test@yandex.ru")
-                .login("valid_login")
-                .name("kosticin")
-                .birthday(LocalDate.of(1984, 6, 6))
-                .build();
+        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
@@ -90,12 +70,7 @@ class FilmServiceTest {
 
         // добавляем фильм
 
-        Film film = Film.builder()
-                .name("Inception")
-                .description("A thief who steals corporate secrets...")
-                .releaseDate(LocalDate.of(2010, 7, 16))
-                .duration(148)
-                .build();
+        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -107,12 +82,7 @@ class FilmServiceTest {
         Long userId = createdUser.getId();
 
         // добавляем лайк
-        ResponseEntity<Void> putLikeResponse = restTemplate.exchange(
-                "/films/" + (filmId+999) + "/like/" + userId,
-                HttpMethod.PUT,
-                null,
-                Void.class
-        );
+        ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + (filmId + 999) + "/like/" + userId, HttpMethod.PUT, null, Void.class);
 
         assertEquals(404, putLikeResponse.getStatusCode().value());
 
@@ -121,12 +91,7 @@ class FilmServiceTest {
     @Test
     void addLike_whenUnknownUser_getError() {
         // добавляем пользователя
-        User user = User.builder()
-                .email("test@yandex.ru")
-                .login("valid_login")
-                .name("kosticin")
-                .birthday(LocalDate.of(1984, 6, 6))
-                .build();
+        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
@@ -137,12 +102,7 @@ class FilmServiceTest {
 
         // добавляем фильм
 
-        Film film = Film.builder()
-                .name("Inception")
-                .description("A thief who steals corporate secrets...")
-                .releaseDate(LocalDate.of(2010, 7, 16))
-                .duration(148)
-                .build();
+        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -154,12 +114,7 @@ class FilmServiceTest {
         Long userId = createdUser.getId();
 
         // добавляем лайк
-        ResponseEntity<Void> putLikeResponse = restTemplate.exchange(
-                "/films/" + filmId + "/like/" + (userId+999),
-                HttpMethod.PUT,
-                null,
-                Void.class
-        );
+        ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + (userId + 999), HttpMethod.PUT, null, Void.class);
 
         assertEquals(404, putLikeResponse.getStatusCode().value());
 
@@ -170,12 +125,7 @@ class FilmServiceTest {
     void deleteLike_whenCorrectData_deleteLike() {
         // добавляем лайк
         // добавляем пользователя
-        User user = User.builder()
-                .email("test@yandex.ru")
-                .login("valid_login")
-                .name("kosticin")
-                .birthday(LocalDate.of(1984, 6, 6))
-                .build();
+        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
@@ -186,12 +136,7 @@ class FilmServiceTest {
 
         // добавляем фильм
 
-        Film film = Film.builder()
-                .name("Inception")
-                .description("A thief who steals corporate secrets...")
-                .releaseDate(LocalDate.of(2010, 7, 16))
-                .duration(148)
-                .build();
+        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -203,12 +148,7 @@ class FilmServiceTest {
         Long userId = createdUser.getId();
 
         // добавляем лайк
-        ResponseEntity<Void> putLikeResponse = restTemplate.exchange(
-                "/films/" + filmId + "/like/" + userId,
-                HttpMethod.PUT,
-                null,
-                Void.class
-        );
+        ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + userId, HttpMethod.PUT, null, Void.class);
 
         assertEquals(200, putLikeResponse.getStatusCode().value());
         ResponseEntity<Film> getFilmResponse = restTemplate.getForEntity("/films/" + filmId, Film.class);
@@ -219,12 +159,7 @@ class FilmServiceTest {
         assertTrue(updatedFilm.getLikeUsers().contains(userId));
 
         // удаляем лайк
-        ResponseEntity<Void> deleteLikeResponse = restTemplate.exchange(
-                "/films/" + filmId + "/like/" + userId,
-                HttpMethod.DELETE,
-                null,
-                Void.class
-        );
+        ResponseEntity<Void> deleteLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + userId, HttpMethod.DELETE, null, Void.class);
 
         assertEquals(200, deleteLikeResponse.getStatusCode().value());
         // проверяем, что лайк удален
@@ -240,12 +175,7 @@ class FilmServiceTest {
     void deleteLike_whenUnknownFilm_getError() {
         // добавляем лайк
         // добавляем пользователя
-        User user = User.builder()
-                .email("test@yandex.ru")
-                .login("valid_login")
-                .name("kosticin")
-                .birthday(LocalDate.of(1984, 6, 6))
-                .build();
+        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
@@ -256,12 +186,7 @@ class FilmServiceTest {
 
         // добавляем фильм
 
-        Film film = Film.builder()
-                .name("Inception")
-                .description("A thief who steals corporate secrets...")
-                .releaseDate(LocalDate.of(2010, 7, 16))
-                .duration(148)
-                .build();
+        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -273,12 +198,7 @@ class FilmServiceTest {
         Long userId = createdUser.getId();
 
         // добавляем лайк
-        ResponseEntity<Void> putLikeResponse = restTemplate.exchange(
-                "/films/" + filmId + "/like/" + userId,
-                HttpMethod.PUT,
-                null,
-                Void.class
-        );
+        ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + userId, HttpMethod.PUT, null, Void.class);
 
         assertEquals(200, putLikeResponse.getStatusCode().value());
         ResponseEntity<Film> getFilmResponse = restTemplate.getForEntity("/films/" + filmId, Film.class);
@@ -289,12 +209,7 @@ class FilmServiceTest {
         assertTrue(updatedFilm.getLikeUsers().contains(userId));
 
         // удаляем лайк
-        ResponseEntity<Void> deleteLikeResponse = restTemplate.exchange(
-                "/films/" + (filmId+999) + "/like/" + userId,
-                HttpMethod.DELETE,
-                null,
-                Void.class
-        );
+        ResponseEntity<Void> deleteLikeResponse = restTemplate.exchange("/films/" + (filmId + 999) + "/like/" + userId, HttpMethod.DELETE, null, Void.class);
 
         assertEquals(404, deleteLikeResponse.getStatusCode().value());
 
@@ -304,12 +219,7 @@ class FilmServiceTest {
     void deleteLike_whenUnknownUser_getError() {
         // добавляем лайк
         // добавляем пользователя
-        User user = User.builder()
-                .email("test@yandex.ru")
-                .login("valid_login")
-                .name("kosticin")
-                .birthday(LocalDate.of(1984, 6, 6))
-                .build();
+        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
@@ -320,12 +230,7 @@ class FilmServiceTest {
 
         // добавляем фильм
 
-        Film film = Film.builder()
-                .name("Inception")
-                .description("A thief who steals corporate secrets...")
-                .releaseDate(LocalDate.of(2010, 7, 16))
-                .duration(148)
-                .build();
+        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -337,12 +242,7 @@ class FilmServiceTest {
         Long userId = createdUser.getId();
 
         // добавляем лайк
-        ResponseEntity<Void> putLikeResponse = restTemplate.exchange(
-                "/films/" + filmId + "/like/" + userId,
-                HttpMethod.PUT,
-                null,
-                Void.class
-        );
+        ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + userId, HttpMethod.PUT, null, Void.class);
 
         assertEquals(200, putLikeResponse.getStatusCode().value());
         ResponseEntity<Film> getFilmResponse = restTemplate.getForEntity("/films/" + filmId, Film.class);
@@ -353,12 +253,7 @@ class FilmServiceTest {
         assertTrue(updatedFilm.getLikeUsers().contains(userId));
 
         // удаляем лайк
-        ResponseEntity<Void> deleteLikeResponse = restTemplate.exchange(
-                "/films/" + filmId + "/like/" + (userId+999),
-                HttpMethod.DELETE,
-                null,
-                Void.class
-        );
+        ResponseEntity<Void> deleteLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + (userId + 999), HttpMethod.DELETE, null, Void.class);
 
         assertEquals(404, deleteLikeResponse.getStatusCode().value());
 
@@ -368,23 +263,13 @@ class FilmServiceTest {
     void findPopular() {
         // добавляем 11 фильмов
         for (int i = 0; i < 11; i++) {
-            Film film = Film.builder()
-                    .name("Inception")
-                    .description("A thief who steals corporate secrets...")
-                    .releaseDate(LocalDate.of(2010, 7, 16))
-                    .duration(148)
-                    .build();
+            Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
             ResponseEntity<Film> postResponse = restTemplate.postForEntity("/films", film, Film.class);
             assertEquals(200, postResponse.getStatusCode().value());
         }
         // добавляем 10 пользователей
         for (int i = 0; i < 10; i++) {
-            User user = User.builder()
-                    .email("test@yandex.ru")
-                    .login("valid_login")
-                    .name("kosticin")
-                    .birthday(LocalDate.of(1984, 6, 6))
-                    .build();
+            User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
             ResponseEntity<User> postResponse = restTemplate.postForEntity("/users", user, User.class);
             assertEquals(200, postResponse.getStatusCode().value());
@@ -392,12 +277,7 @@ class FilmServiceTest {
         // добавляем лайки на 11 фильмов от 0 до 10 от разных пользователей
         for (int i = 1; i <= 10; i++) {
             for (int j = 1; j <= i; j++) {
-                ResponseEntity<Void> putLikeResponse = restTemplate.exchange(
-                        "/films/" + i + "/like/" + j,
-                        HttpMethod.PUT,
-                        null,
-                        Void.class
-                );
+                ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + i + "/like/" + j, HttpMethod.PUT, null, Void.class);
                 assertEquals(200, putLikeResponse.getStatusCode().value());
             }
         }
@@ -408,7 +288,7 @@ class FilmServiceTest {
         assertEquals(200, getResponse.getStatusCode().value());
         Film[] getFilms = getResponse.getBody();
         assertNotNull(getFilms);
-        assertTrue(getFilms.length == 10, "Список фильмов должен содержать 10 фильмов");
+        assertEquals(10, getFilms.length, "Список фильмов должен содержать 10 фильмов");
 
 
         // получаем топ 5 самых популярных (по умолчанию)
@@ -416,7 +296,7 @@ class FilmServiceTest {
         assertEquals(200, getResponse2.getStatusCode().value());
         Film[] getFilms2 = getResponse2.getBody();
         assertNotNull(getFilms2);
-        assertTrue(getFilms2.length == 5, "Список фильмов должен содержать 5 фильмов");
+        assertEquals(5, getFilms2.length, "Список фильмов должен содержать 5 фильмов");
 
 
         // получаем топ 1000 самых популярных (по умолчанию)
