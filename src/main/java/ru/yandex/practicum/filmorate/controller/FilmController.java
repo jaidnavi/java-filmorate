@@ -1,54 +1,62 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+
 
 @Slf4j
 @RestController
-@RequestMapping("/films")
+@AllArgsConstructor
 public class FilmController {
 
-    private final Map<Long, Film> films = new HashMap<>();
+    private final FilmStorage filmStorage;
 
-
-    @GetMapping
+    @GetMapping("/films")
     public Collection<Film> findAll() {
-        return films.values();
+        return filmStorage.findAll();
     }
 
-
-    @PostMapping
+    @PostMapping("/films")
     public Film create(@Valid @RequestBody Film film) {
-        film.setId(getNextId());
-
-        films.put(film.getId(), film);
-        return film;
+        return filmStorage.create(film);
     }
 
-    @PutMapping
+    @PutMapping("/films")
     public Film update(@Valid @RequestBody Film film) {
-        if (!films.containsKey(film.getId())) {
-            log.error("Не найден фильм с id " + film.getId());
-            throw new ValidationException("Не найден фильм с id " + film.getId());
-        }
-
-        films.put(film.getId(), film);
-        return film;
+        return filmStorage.update(film);
     }
 
-    // вспомогательный метод для генерации идентификатора нового фильма
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @PutMapping("/films/{id}/like/{userId}")
+    public Film likeFilm(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
+        return filmStorage.addLike(userId, filmId);
     }
+
+    @DeleteMapping("/films/{id}/like/{userId}")
+    public Film deleteFriend(@PathVariable("id") long filmId, @PathVariable("friendId") long userId) {
+        return filmStorage.deleteLike(userId, filmId);
+    }
+
+    @GetMapping("/films/popular")
+    public Collection<Film> findPopular(
+            @RequestParam(defaultValue = "10", required = false) Integer count) {
+        return filmStorage.findPopular(count);
+    }
+
+//    @ExceptionHandler
+//    public Map<String, String> handle(final NoDataFoundException e) {
+//        return Map.of(
+//                "error", "Данные не найдены",
+//                "errorMessage", e.getMessage()
+//        );
+//    }
+
 }

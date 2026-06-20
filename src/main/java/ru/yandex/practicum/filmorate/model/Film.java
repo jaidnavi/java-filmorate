@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -13,6 +15,7 @@ public class Film {
     private static final int MAX_LENGTH_DESCRIPTION = 200;
 
     private Long id;
+    private Set<Long> likeUsers;
     @NotBlank(message = "Название фильма не может быть пустым")
     private String name;
     @Size(max = 200, message = "Максимальная длина описания - 200 символов")
