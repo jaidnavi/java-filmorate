@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
 
@@ -15,48 +14,48 @@ import java.util.Collection;
 @Slf4j
 @RestController
 @AllArgsConstructor
+@RequestMapping("/users")
 public class UserController {
 
-    private final UserStorage userStorage;
-    private final UserService userService;
+    UserService userService;
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public User find(@PathVariable("id") long userId) {
-        return userStorage.get(userId)
+        return userService.get(userId)
                 .orElseThrow(() -> new NoDataFoundException("Пользователь с id " + userId + " не найден"));
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public Collection<User> findAll() {
-        return userStorage.findAll();
+        return userService.findAll();
     }
 
-    @PostMapping("/users")
+    @PostMapping
     public User create(@Valid @RequestBody User user) {
-        return userStorage.create(user);
+        return userService.create(user);
     }
 
-    @PutMapping("/users")
+    @PutMapping
     public User update(@Valid @RequestBody User user) {
-        return userStorage.update(user);
+        return userService.update(user);
     }
 
-    @PutMapping("/users/{id}/friends/{friendId}")
+    @PutMapping("/{id}/friends/{friendId}")
     public User addFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
         return userService.addFriend(userId, friendId);
     }
 
-    @DeleteMapping("/users/{id}/friends/{friendId}")
+    @DeleteMapping("/{id}/friends/{friendId}")
     public User deleteFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
         return userService.deleteFriend(userId, friendId);
     }
 
-    @GetMapping("/users/{id}/friends")
+    @GetMapping("/{id}/friends")
     public Collection<User> findFriends(@PathVariable("id") long userId) {
         return userService.findFriends(userId);
     }
 
-    @GetMapping("/users/{id}/friends/common/{otherId}")
+    @GetMapping("/{id}/friends/common/{otherId}")
     public Collection<User> findCommonFriends(@PathVariable("id") long userId, @PathVariable("otherId") long otherId) {
         return userService.findCommonFriends(userId, otherId);
     }

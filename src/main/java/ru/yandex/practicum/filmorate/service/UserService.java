@@ -16,11 +16,27 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UserService {
-    UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
+    }
+
+    public User create(User user) {
+        return userStorage.create(user);
+    }
+
+    public User update(User newUser) {
+        return userStorage.update(newUser);
+    }
+
+    public Collection<User> findAll() {
+        return userStorage.findAll();
+    }
+
+    public Optional<User> get(Long userId) {
+        return userStorage.get(userId);
     }
 
     public User addFriend(Long userId, Long friendUserId) {

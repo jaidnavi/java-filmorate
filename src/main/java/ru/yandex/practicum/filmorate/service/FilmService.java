@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,14 +19,31 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
 
-    FilmStorage filmStorage;
-    UserStorage userStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }
+
+    public Collection<Film> findAll() {
+        return filmStorage.findAll();
+    }
+
+    public Film create(Film film) {
+        return filmStorage.create(film);
+    }
+
+    public Film update(Film newFilm) {
+        return filmStorage.update(newFilm);
+    }
+
+    public Optional<Film> get(Long filmId) {
+        return filmStorage.get(filmId);
+    }
+
 
     public Film addLike(Long userId, Long filmId) {
         User user = userStorage.get(userId).orElseThrow(() -> {
