@@ -12,11 +12,6 @@ public interface FilmStorage {
 
     Collection<Film> findAll();
 
-    public Optional<Film> get(Long filmId);
+    Optional<Film> get(Long filmId);
 
-    Film addLike(Long userId, Long filmId);
-
-    Film deleteLike(Long userId, Long filmId);
-
-    Collection<Film> findPopular(Integer count);
 }

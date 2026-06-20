@@ -118,7 +118,7 @@ class FilmorateApplicationTests {
                 new HttpEntity<>(updatedData),
                 User.class
         );
-        assertEquals(500, putResponse.getStatusCode().value());
+        assertEquals(404, putResponse.getStatusCode().value());
     }
 
     @Test
@@ -218,7 +218,7 @@ class FilmorateApplicationTests {
                 new HttpEntity<>(updatedData),
                 User.class
         );
-        assertEquals(500, putResponse.getStatusCode().value());
+        assertEquals(404, putResponse.getStatusCode().value());
     }
 
 }
