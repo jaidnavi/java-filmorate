@@ -1,59 +1,63 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
 
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
-    private final Map<Long, User> users = new HashMap<>();
+    UserService userService;
+
+    @GetMapping("/{id}")
+    public User find(@PathVariable("id") long userId) {
+        return userService.get(userId)
+                .orElseThrow(() -> new NoDataFoundException("Пользователь с id " + userId + " не найден"));
+    }
 
     @GetMapping
     public Collection<User> findAll() {
-        return users.values();
+        return userService.findAll();
     }
-
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        user.setId(getNextId());
-
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.info("Имя пользователя пустое, использован логин");
-        }
-
-        users.put(user.getId(), user);
-        return user;
+        return userService.create(user);
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-        if (!users.containsKey(user.getId())) {
-            log.error("Не найден пользователь с id " + user.getId());
-            throw new ValidationException("Не найден пользователь с id " + user.getId());
-        }
-
-        users.put(user.getId(), user);
-        return user;
+        return userService.update(user);
     }
 
-
-    // вспомогательный метод для генерации идентификатора нового user
-    private long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
+        return userService.addFriend(userId, friendId);
     }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
+        return userService.deleteFriend(userId, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public Collection<User> findFriends(@PathVariable("id") long userId) {
+        return userService.findFriends(userId);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> findCommonFriends(@PathVariable("id") long userId, @PathVariable("otherId") long otherId) {
+        return userService.findCommonFriends(userId, otherId);
+    }
+
 }
