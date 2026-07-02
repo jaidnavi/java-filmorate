@@ -101,7 +101,7 @@ public class UserService {
 
         Set<Long> friendFriendsSet = friend.getFriends();
         if (friendFriendsSet == null || friendFriendsSet.isEmpty() || !friendFriendsSet.contains(userId)) {
-            log.info("Пользователь с id {} уже не является другом пользователю с ид {}.", userId, friendUserId);
+            log.info("Пользователь с id {} уже не является другом пользователю с ид {}!", userId, friendUserId);
         } else {
             friendFriendsSet.remove(userId);
         }
