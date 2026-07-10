@@ -12,7 +12,8 @@ public class Film {
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
     private static final int MAX_LENGTH_DESCRIPTION = 200;
 
-    private Long id;
+    @NotNull
+    private Long filmId;
     private Set<Long> likeUsers;
     @NotBlank(message = "Название фильма не может быть пустым")
     private String name;
@@ -23,6 +24,11 @@ public class Film {
 
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     private int duration;
+
+    @NotNull(message = "Рейтинг не может быть пустым")
+    private Mpa mpa;
+
+    private Set<Genre> genres;
 
     @AssertTrue(message = "Дата релиза — не раньше 28 декабря 1895 года")
     private boolean isReleaseDateValid() {

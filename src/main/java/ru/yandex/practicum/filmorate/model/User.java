@@ -1,9 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,9 +12,9 @@ import java.util.Set;
 public class User {
     private static final String SPACE_SIMBOL = " ";
 
-    private Long id;
+    @NotNull
+    private Long userId;
     private Set<Long> friends;
-    private Set<Long> likeFilms;
     @NotBlank(message = "Электронная почта не может быть пустой")
     @Email(message = "Электронная почта должна содержать символ @")
     private String email;

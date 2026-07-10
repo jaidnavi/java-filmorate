@@ -56,17 +56,6 @@ public class FilmService {
             return new NoDataFoundException("При добавлении лайка, не найден фильм с id " + filmId);
         });
 
-        Set<Long> likeFilmsSet = user.getLikeFilms();
-        if (likeFilmsSet != null && !likeFilmsSet.isEmpty() && likeFilmsSet.contains(filmId)) {
-            log.info("Фильм с id {} уже отмечен лайком пользователем с id {}.", filmId, userId);
-        } else {
-
-            if (likeFilmsSet == null) {
-                likeFilmsSet = new HashSet<>();
-            }
-            likeFilmsSet.add(filmId);
-        }
-
         Set<Long> likeUsersSet = film.getLikeUsers();
         if (likeUsersSet != null && !likeUsersSet.isEmpty() && likeUsersSet.contains(userId)) {
             log.info("Пользователь с id {} уже отметил лайком фильм с id {}.", userId, filmId);
@@ -76,10 +65,6 @@ public class FilmService {
             }
             likeUsersSet.add(userId);
         }
-
-        user.setLikeFilms(likeFilmsSet);
-        userStorage.update(user);
-        log.info("Пользователь с id {} успешно лайкнул фильм с id {}", userId, filmId);
 
         film.setLikeUsers(likeUsersSet);
         filmStorage.update(film);
@@ -99,12 +84,6 @@ public class FilmService {
             return new NoDataFoundException("При удалении лайка, не найден фильм с id " + filmId);
         });
 
-        Set<Long> likeFilmsSet = user.getLikeFilms();
-        if (likeFilmsSet == null || likeFilmsSet.isEmpty() || !likeFilmsSet.contains(filmId)) {
-            log.info("Фильм с id {} не отмечен лайком пользователем с id {}.", filmId, userId);
-        } else {
-            likeFilmsSet.remove(filmId);
-        }
 
         Set<Long> likeUsersSet = film.getLikeUsers();
         if (likeUsersSet == null || likeUsersSet.isEmpty() || !likeUsersSet.contains(userId)) {
@@ -112,10 +91,6 @@ public class FilmService {
         } else {
             likeUsersSet.remove(userId);
         }
-
-        user.setLikeFilms(likeFilmsSet);
-        userStorage.update(user);
-        log.info("Пользователь с id {} успешно удалил из понравившихся фильм с id {}", userId, filmId);
 
         film.setLikeUsers(likeUsersSet);
         filmStorage.update(film);

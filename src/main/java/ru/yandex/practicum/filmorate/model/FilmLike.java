@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,9 +8,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Genre {
+public class FilmLike {
     @NotNull
-    private Long genreId;
-    @NotBlank(message = "Название жанра не может быть пустым")
-    private String genre;
+    private Long filmLikeId;
+    @NotNull
+    private Long userId;
+    @NotNull
+    private Long filmId;
 }
