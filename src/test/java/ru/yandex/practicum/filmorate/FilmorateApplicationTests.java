@@ -37,7 +37,7 @@ class FilmorateApplicationTests {
         assertEquals(200, postResponse.getStatusCode().value());
         User createdUser = postResponse.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
     }
 
@@ -83,9 +83,9 @@ class FilmorateApplicationTests {
         assertEquals(200, postResponse.getStatusCode().value());
         User savedUser = postResponse.getBody();
         assertNotNull(savedUser);
-        Long userId = savedUser.getId();
+        Long userId = savedUser.getUserId();
         User updatedData = User.builder()
-                .id(userId)
+                .userId(userId)
                 .email("new_email@yandex.ru") // Меняем почту
                 .login("new_login")           // Меняем логин
                 .name("Новое Имя")            // Меняем имя
@@ -100,7 +100,7 @@ class FilmorateApplicationTests {
         assertEquals(200, putResponse.getStatusCode().value());
         User updatedUser = putResponse.getBody();
         assertNotNull(updatedUser);
-        assertEquals(userId, updatedUser.getId(), "ID пользователя не должен измениться");
+        assertEquals(userId, updatedUser.getUserId(), "ID пользователя не должен измениться");
         assertEquals("new_login", updatedUser.getLogin());
         assertEquals("new_email@yandex.ru", updatedUser.getEmail());
         assertEquals("Новое Имя", updatedUser.getName());
@@ -109,7 +109,7 @@ class FilmorateApplicationTests {
     @Test
     void putUser_whenIncorrectID_getError() {
         User updatedData = User.builder()
-                .id(-999L)
+                .userId(-999L)
                 .email("new_email@yandex.ru") // Меняем почту
                 .login("new_login")           // Меняем логин
                 .name("Новое Имя")            // Меняем имя
@@ -136,7 +136,7 @@ class FilmorateApplicationTests {
         assertEquals(200, postResponse.getStatusCode().value());
         Film createdFilm = postResponse.getBody();
         assertNotNull(createdFilm);
-        assertNotNull(createdFilm.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdFilm.getFilmId()); // Проверяем, что ID сгенерировался
         assertEquals("Inception", createdFilm.getName());
 
     }
@@ -182,9 +182,9 @@ class FilmorateApplicationTests {
         assertEquals(200, postResponse.getStatusCode().value());
         Film savedFilm = postResponse.getBody();
         assertNotNull(savedFilm);
-        Long filmId = savedFilm.getId();
+        Long filmId = savedFilm.getFilmId();
         Film updatedData = Film.builder()
-                .id(filmId)
+                .filmId(filmId)
                 .name("New Film name")
                 .description("New Film description")
                 .releaseDate(LocalDate.of(2025, 7, 16))
@@ -199,7 +199,7 @@ class FilmorateApplicationTests {
         assertEquals(200, putResponse.getStatusCode().value());
         Film updatedFilm = putResponse.getBody();
         assertNotNull(updatedFilm);
-        assertEquals(filmId, updatedFilm.getId(), "ID фильма не должен измениться");
+        assertEquals(filmId, updatedFilm.getFilmId(), "ID фильма не должен измениться");
         assertEquals("New Film name", updatedFilm.getName());
         assertEquals("New Film description", updatedFilm.getDescription());
         assertEquals(222, updatedFilm.getDuration());
@@ -209,7 +209,7 @@ class FilmorateApplicationTests {
     @Test
     void putFilm_whenIncorrectID_getError() {
         Film updatedData = Film.builder()
-                .id(-999L)
+                .filmId(-999L)
                 .name("New Film")
                 .description("New Film")
                 .releaseDate(LocalDate.of(2010, 7, 16))

@@ -1,18 +1,22 @@
 package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 import java.util.Set;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Film {
-    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
-    private static final int MAX_LENGTH_DESCRIPTION = 200;
+    public static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
+    public static final int MAX_LENGTH_DESCRIPTION = 200;
 
-    @NotNull
     private Long filmId;
     private Set<Long> likeUsers;
     @NotBlank(message = "Название фильма не может быть пустым")

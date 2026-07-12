@@ -30,7 +30,7 @@ public class MpaDaoImpl implements MpaDao {
     }
 
     @Override
-    public Mpa getMPA(Long mpaId) {
+    public Mpa getMpaById(Long mpaId) {
         try {
             return jdbcTemplate.queryForObject(format("SELECT * FROM mpa WHERE mpa_id=%d", mpaId), new MpaMapper());
         } catch (EmptyResultDataAccessException e) {
@@ -39,7 +39,7 @@ public class MpaDaoImpl implements MpaDao {
     }
 
     @Override
-    public List<Mpa> getAllMPA() {
+    public List<Mpa> getAllMpa() {
         return new ArrayList<>(jdbcTemplate.query("SELECT * FROM mpa ORDER BY mpa_id", new MpaMapper()));
     }
 

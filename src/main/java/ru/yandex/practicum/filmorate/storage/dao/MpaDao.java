@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import java.util.List;
 
 public interface MpaDao {
-    Mpa getMPA(Long mpaId);
-    List<Mpa> getAllMPA();
+    Mpa getMpaById(Long mpaId);
+
+    List<Mpa> getAllMpa();
 }

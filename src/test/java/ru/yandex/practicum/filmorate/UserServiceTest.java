@@ -34,18 +34,18 @@ class UserServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
-        Long userId1 = createdUser.getId();
+        Long userId1 = createdUser.getUserId();
 
         // добавляем пользователя 2
         postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
-        Long userId2 = createdUser.getId();
+        Long userId2 = createdUser.getUserId();
 
         // добавляем друга
         ResponseEntity<Void> putFriendResponse = restTemplate.exchange(
@@ -91,18 +91,18 @@ class UserServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
-        Long userId1 = createdUser.getId();
+        Long userId1 = createdUser.getUserId();
 
         // добавляем пользователя 2
         postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
-        Long userId2 = createdUser.getId();
+        Long userId2 = createdUser.getUserId();
 
         // добавляем друга
         ResponseEntity<Void> putFriendResponse = restTemplate.exchange(
@@ -146,9 +146,9 @@ class UserServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
-        Long userId1 = createdUser.getId();
+        Long userId1 = createdUser.getUserId();
         // добавляем несуществующего друга
         ResponseEntity<Void> putFriendResponse = restTemplate.exchange(
                 "/users/" + userId1 + "/friends/" + 99999,
@@ -175,9 +175,9 @@ class UserServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
-        Long userId1 = createdUser.getId();
+        Long userId1 = createdUser.getUserId();
         // добавляем несуществующего друга
         ResponseEntity<Void> putFriendResponse = restTemplate.exchange(
                 "/users/" + 9999 + "/friends/" + userId1,
@@ -193,7 +193,7 @@ class UserServiceTest {
     @Test
     void deleteFriend_whenCorrectData_deleteFriend() {
         User user = addFriend_whenCorrectData_addFriend();
-        Long userId = user.getId();
+        Long userId = user.getUserId();
         Long friendId = user.getFriends().stream()
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Список друзей пуст, тест не может быть продолжен"));
@@ -226,7 +226,7 @@ class UserServiceTest {
     @Test
     void deleteFriend_whenUnknownUsers_getError() {
         User user = addFriend_whenCorrectData_addFriend();
-        Long userId = user.getId();
+        Long userId = user.getUserId();
         Long friendId = user.getFriends().stream()
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Список друзей пуст, тест не может быть продолжен"));
@@ -244,7 +244,7 @@ class UserServiceTest {
     @Test
     void deleteFriend_whenUnknownFriends_getError() {
         User user = addFriend_whenCorrectData_addFriend();
-        Long userId = user.getId();
+        Long userId = user.getUserId();
         Long friendId = user.getFriends().stream()
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Список друзей пуст, тест не может быть продолжен"));
@@ -273,18 +273,18 @@ class UserServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
-        Long userId1 = createdUser.getId();
+        Long userId1 = createdUser.getUserId();
 
         // добавляем пользователя 2
         postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
-        Long userId2 = createdUser.getId();
+        Long userId2 = createdUser.getUserId();
 
         // удаляем друга, которого не добавляли
         ResponseEntity<Void> deleteFriendResponse = restTemplate.exchange(
@@ -311,9 +311,9 @@ class UserServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
-        Long userId1 = createdUser.getId();
+        Long userId1 = createdUser.getUserId();
 
         // добавляем 10 пользователей и всех добавляем в друзья пользователю 1
         for (int i = 0; i < 10; i++) {
@@ -329,9 +329,9 @@ class UserServiceTest {
             assertEquals(200, postResponseUser2.getStatusCode().value());
             User createdUser2 = postResponseUser2.getBody();
             assertNotNull(createdUser2);
-            assertNotNull(createdUser2.getId()); // Проверяем, что ID сгенерировался
+            assertNotNull(createdUser2.getUserId()); // Проверяем, что ID сгенерировался
             assertEquals("valid_login", createdUser2.getLogin());
-            Long userId2 = createdUser2.getId();
+            Long userId2 = createdUser2.getUserId();
 
             // каждого добавляем к пользователю 1 в друзья
             ResponseEntity<Void> putFriendResponse = restTemplate.exchange(
@@ -366,16 +366,16 @@ class UserServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
-        Long userId1 = createdUser.getId();
+        Long userId1 = createdUser.getUserId();
         assertEquals(200, postResponseUser.getStatusCode().value());
         postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         User createdUser2 = postResponseUser.getBody();
-        Long userId2 = Objects.requireNonNull(createdUser2).getId();
+        Long userId2 = Objects.requireNonNull(createdUser2).getUserId();
         postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         User createdUser3 = postResponseUser.getBody();
-        Long userId3 = Objects.requireNonNull(createdUser3).getId();
+        Long userId3 = Objects.requireNonNull(createdUser3).getUserId();
 
         // добавляем пользователю 2 в друзья пользователя 1
         ResponseEntity<Void> putFriendResponse = restTemplate.exchange(
@@ -401,6 +401,6 @@ class UserServiceTest {
         User[] commonFriends = getResponse.getBody();
         assertNotNull(commonFriends);
         assertEquals(1, commonFriends.length, "Список пользователей должен содержать 1 друга - пользователя 2");
-        assertEquals(userId2, commonFriends[0].getId(), "Общим другом должен быть Пользователь 2");
+        assertEquals(userId2, commonFriends[0].getUserId(), "Общим другом должен быть Пользователь 2");
     }
 }

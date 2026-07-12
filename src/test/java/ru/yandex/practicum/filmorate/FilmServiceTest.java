@@ -28,7 +28,7 @@ class FilmServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
 
         // добавляем фильм
@@ -38,11 +38,11 @@ class FilmServiceTest {
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
         assertNotNull(createdFilm);
-        assertNotNull(createdFilm.getId());
+        assertNotNull(createdFilm.getFilmId());
         assertEquals("Inception", createdFilm.getName());
 
-        Long filmId = createdFilm.getId();
-        Long userId = createdUser.getId();
+        Long filmId = createdFilm.getFilmId();
+        Long userId = createdUser.getUserId();
 
         // добавляем лайк
         ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + userId, HttpMethod.PUT, null, Void.class);
@@ -65,7 +65,7 @@ class FilmServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
 
         // добавляем фильм
@@ -75,11 +75,11 @@ class FilmServiceTest {
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
         assertNotNull(createdFilm);
-        assertNotNull(createdFilm.getId());
+        assertNotNull(createdFilm.getFilmId());
         assertEquals("Inception", createdFilm.getName());
 
-        Long filmId = createdFilm.getId();
-        Long userId = createdUser.getId();
+        Long filmId = createdFilm.getFilmId();
+        Long userId = createdUser.getUserId();
 
         // добавляем лайк
         ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + (filmId + 999) + "/like/" + userId, HttpMethod.PUT, null, Void.class);
@@ -97,7 +97,7 @@ class FilmServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
 
         // добавляем фильм
@@ -107,11 +107,11 @@ class FilmServiceTest {
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
         assertNotNull(createdFilm);
-        assertNotNull(createdFilm.getId());
+        assertNotNull(createdFilm.getFilmId());
         assertEquals("Inception", createdFilm.getName());
 
-        Long filmId = createdFilm.getId();
-        Long userId = createdUser.getId();
+        Long filmId = createdFilm.getFilmId();
+        Long userId = createdUser.getUserId();
 
         // добавляем лайк
         ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + (userId + 999), HttpMethod.PUT, null, Void.class);
@@ -131,7 +131,7 @@ class FilmServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
 
         // добавляем фильм
@@ -141,11 +141,11 @@ class FilmServiceTest {
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
         assertNotNull(createdFilm);
-        assertNotNull(createdFilm.getId());
+        assertNotNull(createdFilm.getFilmId());
         assertEquals("Inception", createdFilm.getName());
 
-        Long filmId = createdFilm.getId();
-        Long userId = createdUser.getId();
+        Long filmId = createdFilm.getFilmId();
+        Long userId = createdUser.getUserId();
 
         // добавляем лайк
         ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + userId, HttpMethod.PUT, null, Void.class);
@@ -181,7 +181,7 @@ class FilmServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
 
         // добавляем фильм
@@ -191,11 +191,11 @@ class FilmServiceTest {
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
         assertNotNull(createdFilm);
-        assertNotNull(createdFilm.getId());
+        assertNotNull(createdFilm.getFilmId());
         assertEquals("Inception", createdFilm.getName());
 
-        Long filmId = createdFilm.getId();
-        Long userId = createdUser.getId();
+        Long filmId = createdFilm.getFilmId();
+        Long userId = createdUser.getUserId();
 
         // добавляем лайк
         ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + userId, HttpMethod.PUT, null, Void.class);
@@ -225,7 +225,7 @@ class FilmServiceTest {
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
 
         // добавляем фильм
@@ -235,11 +235,11 @@ class FilmServiceTest {
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
         assertNotNull(createdFilm);
-        assertNotNull(createdFilm.getId());
+        assertNotNull(createdFilm.getFilmId());
         assertEquals("Inception", createdFilm.getName());
 
-        Long filmId = createdFilm.getId();
-        Long userId = createdUser.getId();
+        Long filmId = createdFilm.getFilmId();
+        Long userId = createdUser.getUserId();
 
         // добавляем лайк
         ResponseEntity<Void> putLikeResponse = restTemplate.exchange("/films/" + filmId + "/like/" + userId, HttpMethod.PUT, null, Void.class);
