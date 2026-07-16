@@ -36,7 +36,6 @@ public class Film {
     @Builder.Default
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Set<Long> likeUsers = new HashSet<>();
-    ;
 
     @Builder.Default
     @JsonSetter(nulls = Nulls.AS_EMPTY)
