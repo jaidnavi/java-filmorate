@@ -16,7 +16,7 @@ import java.util.Set;
 public class User {
     private static final String SPACE_SIMBOL = " ";
 
-    private Long userId;
+    private Long id;
     private Set<Long> friends;
     @NotBlank(message = "Электронная почта не может быть пустой")
     @Email(message = "Электронная почта должна содержать символ @")

@@ -7,6 +7,7 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -32,6 +33,9 @@ public class FilmTest {
                 .description("A thief who steals corporate secrets...")
                 .releaseDate(LocalDate.of(2010, 7, 16))
                 .duration(148)
+                .mpa(Mpa.builder()
+                        .name("   ")
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
@@ -44,6 +48,9 @@ public class FilmTest {
                 .name("   ")
                 .releaseDate(LocalDate.of(2010, 7, 16))
                 .duration(148)
+                .mpa(Mpa.builder()
+                        .name("   ")
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
@@ -60,6 +67,9 @@ public class FilmTest {
                 .name("Film name")
                 .releaseDate(LocalDate.of(2010, 7, 16))
                 .duration(148)
+                .mpa(Mpa.builder()
+                        .name("   ")
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
@@ -76,6 +86,9 @@ public class FilmTest {
                 .name("Name")
                 .releaseDate(LocalDate.of(1800, 7, 16))
                 .duration(148)
+                .mpa(Mpa.builder()
+                        .name("   ")
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
@@ -92,6 +105,9 @@ public class FilmTest {
                 .name("Name")
                 .releaseDate(LocalDate.of(2010, 7, 16))
                 .duration(-148)
+                .mpa(Mpa.builder()
+                        .name("   ")
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);

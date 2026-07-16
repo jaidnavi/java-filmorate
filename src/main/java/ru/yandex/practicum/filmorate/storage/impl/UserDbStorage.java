@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,10 +7,12 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,14 +72,16 @@ public class UserDbStorage implements UserStorage {
                 user.getLogin(),
                 user.getName(),
                 user.getBirthday(),
-                user.getUserId()
+                user.getId()
         );
 
+        // обновление друзей
+
         if (rowsUpdated == 0) {
-            throw new NoDataFoundException("Не найден пользователь для обновления с id = " + user.getUserId());
+            throw new NoDataFoundException("Не найден пользователь для обновления с id = " + user.getId());
         }
-        return get(user.getUserId()).orElseThrow(() ->
-                new NoDataFoundException("Не найден пользователь с id = " + user.getUserId()));
+        return get(user.getId()).orElseThrow(() ->
+                new NoDataFoundException("Не найден пользователь с id = " + user.getId()));
     }
 
     @Override
@@ -92,6 +96,18 @@ public class UserDbStorage implements UserStorage {
 
         List<User> users = jdbcTemplate.query(sql, USER_MAPPER, userId);
 
+        if (!users.isEmpty()) {
+            User user = users.get(0);
+
+            String sqlFriends = "SELECT friend_id FROM user_friends WHERE user_id = ? AND friend_id IS NOT NULL";
+            List<Long> friendIds = jdbcTemplate.queryForList(sqlFriends, Long.class, userId);
+
+            user.setFriends(new HashSet<>(friendIds));
+
+            return Optional.of(user);
+        }
+
+
         return users.stream().findFirst();
     }
 
@@ -99,7 +115,7 @@ public class UserDbStorage implements UserStorage {
         @Override
         public User mapRow(ResultSet rs, int rowNum) throws SQLException {
             User user = new User();
-            user.setUserId(rs.getLong("user_id"));
+            user.setId(rs.getLong("user_id"));
             user.setEmail(rs.getString("email"));
             user.setLogin(rs.getString("login"));
             user.setName(rs.getString("name"));

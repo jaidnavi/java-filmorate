@@ -30,7 +30,7 @@ select
   f.name,
   f.description,
   f.release_date,
-  f.uration,
+  f.duration,
   mpa.name mpa_name
 from films f
 inner join mpa on mpa.mpa_id = f.mpa_id
@@ -87,11 +87,6 @@ where u.user_id = ?;
 delete from films f
 where f.film_id = ?
 
--- удаление друга
-delete from user_friends f 
-where f.user.id = ?;
-delete from user_friends f
-where  f.friend_id = ?;
 
 -- удаление лайка
 delete from film_likes l 

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,8 @@ import java.util.Collection;
 @AllArgsConstructor
 @RequestMapping("/films")
 public class FilmController {
+
+    private static final String DEFAULT_COUNT_POPULAR_FILMS = "10";
 
     private final FilmService filmService;
 
@@ -41,18 +44,20 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film likeFilm(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
-        return filmService.addLike(userId, filmId);
+    public void likeFilm(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
+        filmService.addLike(filmId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteFriend(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
-        return filmService.deleteLike(userId, filmId);
+    public void deleteFriend(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
+        filmService.deleteLike(filmId, userId);
     }
 
     @GetMapping("/popular")
     public Collection<Film> findPopular(
-            @RequestParam(defaultValue = "10", required = false) Integer count) {
+            @RequestParam(defaultValue = DEFAULT_COUNT_POPULAR_FILMS, required = false)
+            @Positive(message = "Параметр count должен быть больше нуля")
+            Integer count) {
         return filmService.findPopular(count);
     }
 

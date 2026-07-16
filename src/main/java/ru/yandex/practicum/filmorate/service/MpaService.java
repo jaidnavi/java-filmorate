@@ -1,15 +1,24 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.storage.dao.MpaDao;
+import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
+
+import java.util.Collection;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MpaService {
-    public MpaDao mpaDao;
+    private final MpaStorage mpaStorage;
 
-    public MpaService(MpaDao mpaDao) {
-        this.mpaDao = mpaDao;
+    public Collection<Mpa> findAll() {
+        return mpaStorage.findAll();
+    }
+
+    public Mpa findById(Long id) {
+        return mpaStorage.findById(id);
     }
 }

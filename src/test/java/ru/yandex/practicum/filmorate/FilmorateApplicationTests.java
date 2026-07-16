@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ class FilmorateApplicationTests {
         assertEquals(200, postResponse.getStatusCode().value());
         User createdUser = postResponse.getBody();
         assertNotNull(createdUser);
-        assertNotNull(createdUser.getUserId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
         assertEquals("valid_login", createdUser.getLogin());
     }
 
@@ -56,9 +57,11 @@ class FilmorateApplicationTests {
 
     @Test
     void getUsers() {
+        String uniqueLogin = "login_" + System.currentTimeMillis();
+
         User user = User.builder()
                 .email("test@yandex.ru")
-                .login("valid_login")
+                .login(uniqueLogin)
                 .name("kosticin")
                 .birthday(LocalDate.of(1984, 6, 6))
                 .build();
@@ -83,9 +86,9 @@ class FilmorateApplicationTests {
         assertEquals(200, postResponse.getStatusCode().value());
         User savedUser = postResponse.getBody();
         assertNotNull(savedUser);
-        Long userId = savedUser.getUserId();
+        Long userId = savedUser.getId();
         User updatedData = User.builder()
-                .userId(userId)
+                .id(userId)
                 .email("new_email@yandex.ru") // Меняем почту
                 .login("new_login")           // Меняем логин
                 .name("Новое Имя")            // Меняем имя
@@ -100,7 +103,7 @@ class FilmorateApplicationTests {
         assertEquals(200, putResponse.getStatusCode().value());
         User updatedUser = putResponse.getBody();
         assertNotNull(updatedUser);
-        assertEquals(userId, updatedUser.getUserId(), "ID пользователя не должен измениться");
+        assertEquals(userId, updatedUser.getId(), "ID пользователя не должен измениться");
         assertEquals("new_login", updatedUser.getLogin());
         assertEquals("new_email@yandex.ru", updatedUser.getEmail());
         assertEquals("Новое Имя", updatedUser.getName());
@@ -109,7 +112,7 @@ class FilmorateApplicationTests {
     @Test
     void putUser_whenIncorrectID_getError() {
         User updatedData = User.builder()
-                .userId(-999L)
+                .id(-999L)
                 .email("new_email@yandex.ru") // Меняем почту
                 .login("new_login")           // Меняем логин
                 .name("Новое Имя")            // Меняем имя
@@ -136,7 +139,7 @@ class FilmorateApplicationTests {
         assertEquals(200, postResponse.getStatusCode().value());
         Film createdFilm = postResponse.getBody();
         assertNotNull(createdFilm);
-        assertNotNull(createdFilm.getFilmId()); // Проверяем, что ID сгенерировался
+        assertNotNull(createdFilm.getId()); // Проверяем, что ID сгенерировался
         assertEquals("Inception", createdFilm.getName());
 
     }
@@ -172,8 +175,14 @@ class FilmorateApplicationTests {
 
     @Test
     void putFilm_whenCorrectData_updateFilm() {
+
+        Mpa testMpa = Mpa.builder()
+                .id(1L)
+                .build();
+
         Film initialFilm = Film.builder()
                 .name("Old Film")
+                .mpa(testMpa)
                 .description("Old Film")
                 .releaseDate(LocalDate.of(2010, 7, 16))
                 .duration(111)
@@ -182,10 +191,11 @@ class FilmorateApplicationTests {
         assertEquals(200, postResponse.getStatusCode().value());
         Film savedFilm = postResponse.getBody();
         assertNotNull(savedFilm);
-        Long filmId = savedFilm.getFilmId();
+        Long filmId = savedFilm.getId();
         Film updatedData = Film.builder()
-                .filmId(filmId)
+                .id(filmId)
                 .name("New Film name")
+                .mpa(testMpa)
                 .description("New Film description")
                 .releaseDate(LocalDate.of(2025, 7, 16))
                 .duration(222)
@@ -199,7 +209,7 @@ class FilmorateApplicationTests {
         assertEquals(200, putResponse.getStatusCode().value());
         Film updatedFilm = putResponse.getBody();
         assertNotNull(updatedFilm);
-        assertEquals(filmId, updatedFilm.getFilmId(), "ID фильма не должен измениться");
+        assertEquals(filmId, updatedFilm.getId(), "ID фильма не должен измениться");
         assertEquals("New Film name", updatedFilm.getName());
         assertEquals("New Film description", updatedFilm.getDescription());
         assertEquals(222, updatedFilm.getDuration());
@@ -208,18 +218,24 @@ class FilmorateApplicationTests {
 
     @Test
     void putFilm_whenIncorrectID_getError() {
+        Mpa testMpa = Mpa.builder()
+                .id(1L)
+                .build();
+
         Film updatedData = Film.builder()
-                .filmId(-999L)
+                .id(-999L)
                 .name("New Film")
                 .description("New Film")
                 .releaseDate(LocalDate.of(2010, 7, 16))
                 .duration(148)
+                .mpa(testMpa) // ИСПРАВЛЕНО: передаем объект MPA, чтобы метод getMpa() не вернул null
                 .build();
-        ResponseEntity<User> putResponse = restTemplate.exchange(
+
+        ResponseEntity<String> putResponse = restTemplate.exchange(
                 "/films",
                 HttpMethod.PUT,
                 new HttpEntity<>(updatedData),
-                User.class
+                String.class // ИСПРАВЛЕНО: возвращаем String вместо некорректного User.class
         );
         assertEquals(404, putResponse.getStatusCode().value());
     }
