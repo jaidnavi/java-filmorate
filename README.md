@@ -12,7 +12,7 @@ Genre - таблица жанров.<br>
 Genre_ref - таблица для определение связи многие-ко-многим. <br>
 Добавлен синтетический ключ. <br>
 MPA - таблица  рейтингов Ассоциации кинокомпаний (Motion Picture Association, сокращённо МРА). <br>
-<img src="/src/main/resources/DB_Scheme.png" alt="MDN">
+<img src="/src/main/resources/ER.png" alt="MDN">
 
 примеры запросов SELECT: <br>
 ```sql
