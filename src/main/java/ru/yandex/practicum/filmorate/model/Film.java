@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Film {
-    public static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
+    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
     public static final int MAX_LENGTH_DESCRIPTION = 200;
 
     private Long id;

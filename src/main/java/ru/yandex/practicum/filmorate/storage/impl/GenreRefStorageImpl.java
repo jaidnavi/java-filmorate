@@ -15,7 +15,7 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class GenreRefDBStorage implements GenreRefStorage {
+public class GenreRefStorageImpl implements GenreRefStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override

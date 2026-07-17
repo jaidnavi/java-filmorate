@@ -16,7 +16,7 @@ import java.util.Collection;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class GenreDbStorage implements GenreStorage {
+public class GenreStorageImpl implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override

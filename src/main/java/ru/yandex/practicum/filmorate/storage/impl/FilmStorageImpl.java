@@ -18,16 +18,13 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-import static ru.yandex.practicum.filmorate.model.Film.CINEMA_BIRTHDAY;
-
-
 @Component
 @Slf4j
-public class FilmDbStorage implements FilmStorage {
+public class FilmStorageImpl implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenreRefStorage genreRefStorage;
     private final FilmLikeStorage filmLikeStorage;
@@ -35,8 +32,10 @@ public class FilmDbStorage implements FilmStorage {
     private final GenreStorage genreStorage;
     private static final FilmMapper FILM_MAPPER = new FilmMapper();
 
+    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
+
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreRefStorage genreRefStorage, FilmLikeStorage filmLikeStorage, MpaStorage mpaStorage, GenreStorage genreStorage) {
+    public FilmStorageImpl(JdbcTemplate jdbcTemplate, GenreRefStorage genreRefStorage, FilmLikeStorage filmLikeStorage, MpaStorage mpaStorage, GenreStorage genreStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreRefStorage = genreRefStorage;
         this.filmLikeStorage = filmLikeStorage;

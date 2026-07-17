@@ -16,7 +16,7 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class FilmLikeDbStorage implements FilmLikeStorage {
+public class FilmLikeStorageImpl implements FilmLikeStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override

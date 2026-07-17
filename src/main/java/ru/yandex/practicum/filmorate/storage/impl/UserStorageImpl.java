@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class UserDbStorage implements UserStorage {
+public class UserStorageImpl implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
     private static final UserMapper USER_MAPPER = new UserMapper();
 
     @Autowired
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
+    public UserStorageImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
 
     }

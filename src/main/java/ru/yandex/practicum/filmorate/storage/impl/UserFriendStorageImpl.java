@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-public class UserFriendDbStorage implements UserFriendStorage {
+public class UserFriendStorageImpl implements UserFriendStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
