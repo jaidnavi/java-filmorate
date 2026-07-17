@@ -22,9 +22,10 @@ class UserServiceTest {
 
     private User addFriend_whenCorrectData_addFriend() {
 
+        String uniqueLogin = "login_" + System.currentTimeMillis();
         User user = User.builder()
                 .email("test@yandex.ru")
-                .login("valid_login")
+                .login(uniqueLogin)
                 .name("kosticin")
                 .birthday(LocalDate.of(1984, 6, 6))
                 .build();
@@ -35,16 +36,18 @@ class UserServiceTest {
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
         Long userId1 = createdUser.getId();
 
         // добавляем пользователя 2
+        String uniqueLogin2 = "login_" + System.currentTimeMillis();
+        user.setLogin(uniqueLogin2);
         postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin2, createdUser.getLogin());
         Long userId2 = createdUser.getId();
 
         // добавляем друга
@@ -64,14 +67,6 @@ class UserServiceTest {
         assertNotNull(updatedUser);
         assertNotNull(updatedUser.getFriends());
         assertTrue(updatedUser.getFriends().contains(userId2));
-
-        // пользователь появился в списке друзей друга
-        getFilmResponse = restTemplate.getForEntity("/users/" + userId2, User.class);
-        assertEquals(200, getFilmResponse.getStatusCode().value());
-        updatedUser = getFilmResponse.getBody();
-        assertNotNull(updatedUser);
-        assertNotNull(updatedUser.getFriends());
-        assertTrue(updatedUser.getFriends().contains(userId1));
 
         return updatedUser;
     }
@@ -79,9 +74,10 @@ class UserServiceTest {
     @Test
     void addFriend_whenCorrectData_addFriendTest() {
 
+        String uniqueLogin = "login_" + System.currentTimeMillis();
         User user = User.builder()
                 .email("test@yandex.ru")
-                .login("valid_login")
+                .login(uniqueLogin)
                 .name("kosticin")
                 .birthday(LocalDate.of(1984, 6, 6))
                 .build();
@@ -92,16 +88,19 @@ class UserServiceTest {
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
         Long userId1 = createdUser.getId();
 
         // добавляем пользователя 2
+        String uniqueLogin2 = "login_" + System.currentTimeMillis();
+        user.setLogin(uniqueLogin2);
+
         postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin2, createdUser.getLogin());
         Long userId2 = createdUser.getId();
 
         // добавляем друга
@@ -122,21 +121,15 @@ class UserServiceTest {
         assertNotNull(updatedUser.getFriends());
         assertTrue(updatedUser.getFriends().contains(userId2));
 
-        // пользователь появился в списке друзей друга
-        getFilmResponse = restTemplate.getForEntity("/users/" + userId2, User.class);
-        assertEquals(200, getFilmResponse.getStatusCode().value());
-        updatedUser = getFilmResponse.getBody();
-        assertNotNull(updatedUser);
-        assertNotNull(updatedUser.getFriends());
-        assertTrue(updatedUser.getFriends().contains(userId1));
     }
 
     @Test
     void addFriend_whenUnknownFriend_getError() {
 
+        String uniqueLogin = "login_" + System.currentTimeMillis();
         User user = User.builder()
                 .email("test@yandex.ru")
-                .login("valid_login")
+                .login(uniqueLogin)
                 .name("kosticin")
                 .birthday(LocalDate.of(1984, 6, 6))
                 .build();
@@ -147,7 +140,7 @@ class UserServiceTest {
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
         Long userId1 = createdUser.getId();
         // добавляем несуществующего друга
         ResponseEntity<Void> putFriendResponse = restTemplate.exchange(
@@ -163,9 +156,10 @@ class UserServiceTest {
     @Test
     void addFriend_whenUnknownUser_getError() {
 
+        String uniqueLogin = "login_" + System.currentTimeMillis();
         User user = User.builder()
                 .email("test@yandex.ru")
-                .login("valid_login")
+                .login(uniqueLogin)
                 .name("kosticin")
                 .birthday(LocalDate.of(1984, 6, 6))
                 .build();
@@ -176,7 +170,7 @@ class UserServiceTest {
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
         Long userId1 = createdUser.getId();
         // добавляем несуществующего друга
         ResponseEntity<Void> putFriendResponse = restTemplate.exchange(
@@ -205,7 +199,7 @@ class UserServiceTest {
                 Void.class
         );
 
-        assertEquals(200, deleteFriendResponse.getStatusCode().value());
+        assertEquals(204, deleteFriendResponse.getStatusCode().value());
 
         // друг исчез из списка друзей
         ResponseEntity<User> getFilmResponse = restTemplate.getForEntity("/users/" + userId, User.class);
@@ -261,9 +255,10 @@ class UserServiceTest {
 
     @Test
     void deleteFriend_noFriendRemove_noDeleteFriend() {
+        String uniqueLogin = "login_" + System.currentTimeMillis();
         User user = User.builder()
                 .email("test@yandex.ru")
-                .login("valid_login")
+                .login(uniqueLogin)
                 .name("kosticin")
                 .birthday(LocalDate.of(1984, 6, 6))
                 .build();
@@ -274,16 +269,18 @@ class UserServiceTest {
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
         Long userId1 = createdUser.getId();
 
         // добавляем пользователя 2
+        String uniqueLogin2 = "login_" + System.currentTimeMillis();
+        user.setLogin(uniqueLogin2);
         postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin2, createdUser.getLogin());
         Long userId2 = createdUser.getId();
 
         // удаляем друга, которого не добавляли
@@ -294,14 +291,15 @@ class UserServiceTest {
                 Void.class
         );
 
-        assertEquals(200, deleteFriendResponse.getStatusCode().value());
+        assertEquals(204, deleteFriendResponse.getStatusCode().value());
     }
 
     @Test
     void findFriends() {
+        String uniqueLogin = "login_" + System.currentTimeMillis();
         User user = User.builder()
                 .email("test@yandex.ru")
-                .login("valid_login")
+                .login(uniqueLogin)
                 .name("kosticin")
                 .birthday(LocalDate.of(1984, 6, 6))
                 .build();
@@ -312,7 +310,7 @@ class UserServiceTest {
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
         Long userId1 = createdUser.getId();
 
         // добавляем 10 пользователей и всех добавляем в друзья пользователю 1
@@ -325,12 +323,14 @@ class UserServiceTest {
                     .build();
 
             // добавляем пользователя 2 (10 раз)
+            String uniqueLogin2 = "login_" + System.currentTimeMillis();
+            user.setLogin(uniqueLogin2);
             ResponseEntity<User> postResponseUser2 = restTemplate.postForEntity("/users", user, User.class);
             assertEquals(200, postResponseUser2.getStatusCode().value());
             User createdUser2 = postResponseUser2.getBody();
             assertNotNull(createdUser2);
             assertNotNull(createdUser2.getId()); // Проверяем, что ID сгенерировался
-            assertEquals("valid_login", createdUser2.getLogin());
+            assertEquals(uniqueLogin2, createdUser2.getLogin());
             Long userId2 = createdUser2.getId();
 
             // каждого добавляем к пользователю 1 в друзья
@@ -354,9 +354,10 @@ class UserServiceTest {
 
     @Test
     void findCommonFriends() {
+        String uniqueLogin = "login_" + System.currentTimeMillis();
         User user = User.builder()
                 .email("test@yandex.ru")
-                .login("valid_login")
+                .login(uniqueLogin)
                 .name("kosticin")
                 .birthday(LocalDate.of(1984, 6, 6))
                 .build();
@@ -367,12 +368,18 @@ class UserServiceTest {
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
         Long userId1 = createdUser.getId();
         assertEquals(200, postResponseUser.getStatusCode().value());
+
+        String uniqueLogin2 = "login_" + System.currentTimeMillis();
+        user.setLogin(uniqueLogin2);
         postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         User createdUser2 = postResponseUser.getBody();
         Long userId2 = Objects.requireNonNull(createdUser2).getId();
+
+        String uniqueLogin3 = "login_" + System.currentTimeMillis();
+        user.setLogin(uniqueLogin3);
         postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         User createdUser3 = postResponseUser.getBody();
         Long userId3 = Objects.requireNonNull(createdUser3).getId();
@@ -386,9 +393,27 @@ class UserServiceTest {
         );
         assertEquals(200, putFriendResponse.getStatusCode().value());
 
+
+        putFriendResponse = restTemplate.exchange(
+                "/users/" + userId2 + "/friends/" + userId1,
+                HttpMethod.PUT,
+                null,
+                Void.class
+        );
+        assertEquals(200, putFriendResponse.getStatusCode().value());
+
         // добавляем пользователю 2 в друзья пользователя 3
         putFriendResponse = restTemplate.exchange(
                 "/users/" + userId2 + "/friends/" + userId3,
+                HttpMethod.PUT,
+                null,
+                Void.class
+        );
+        assertEquals(200, putFriendResponse.getStatusCode().value());
+
+
+        putFriendResponse = restTemplate.exchange(
+                "/users/" + userId3 + "/friends/" + userId2,
                 HttpMethod.PUT,
                 null,
                 Void.class

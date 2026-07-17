@@ -7,6 +7,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -22,18 +23,19 @@ class FilmServiceTest {
     @Test
     void addLike_whenCorrectData_addLike() {
         // добавляем пользователя
-        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
+        String uniqueLogin = "login_" + System.currentTimeMillis();
+        User user = User.builder().email("test@yandex.ru").login(uniqueLogin).name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
 
         // добавляем фильм
 
-        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
+        Film film = Film.builder().name("Inception").mpa(Mpa.builder().id(1L).build()).description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -59,18 +61,19 @@ class FilmServiceTest {
     @Test
     void addLike_whenUnknownFilm_getError() {
         // добавляем пользователя
-        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
+        String uniqueLogin = "login_" + System.currentTimeMillis();
+        User user = User.builder().email("test@yandex.ru").login(uniqueLogin).name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
 
         // добавляем фильм
 
-        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
+        Film film = Film.builder().name("Inception").mpa(Mpa.builder().id(1L).build()).description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -91,18 +94,19 @@ class FilmServiceTest {
     @Test
     void addLike_whenUnknownUser_getError() {
         // добавляем пользователя
-        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
+        String uniqueLogin = "login_" + System.currentTimeMillis();
+        User user = User.builder().email("test@yandex.ru").login(uniqueLogin).name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
 
         // добавляем фильм
 
-        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
+        Film film = Film.builder().name("Inception").mpa(Mpa.builder().id(1L).build()).description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -123,20 +127,21 @@ class FilmServiceTest {
 
     @Test
     void deleteLike_whenCorrectData_deleteLike() {
+        String uniqueLogin = "login_" + System.currentTimeMillis();
         // добавляем лайк
         // добавляем пользователя
-        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
+        User user = User.builder().email("test@yandex.ru").login(uniqueLogin).name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
 
         // добавляем фильм
 
-        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
+        Film film = Film.builder().name("Inception").mpa(Mpa.builder().id(1L).build()).description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -175,18 +180,19 @@ class FilmServiceTest {
     void deleteLike_whenUnknownFilm_getError() {
         // добавляем лайк
         // добавляем пользователя
-        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
+        String uniqueLogin = "login_" + System.currentTimeMillis();
+        User user = User.builder().email("test@yandex.ru").login(uniqueLogin).name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
 
         // добавляем фильм
 
-        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
+        Film film = Film.builder().name("Inception").mpa(Mpa.builder().id(1L).build()).description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -219,18 +225,19 @@ class FilmServiceTest {
     void deleteLike_whenUnknownUser_getError() {
         // добавляем лайк
         // добавляем пользователя
-        User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
+        String uniqueLogin = "login_" + System.currentTimeMillis();
+        User user = User.builder().email("test@yandex.ru").login(uniqueLogin).name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
         ResponseEntity<User> postResponseUser = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(200, postResponseUser.getStatusCode().value());
         User createdUser = postResponseUser.getBody();
         assertNotNull(createdUser);
         assertNotNull(createdUser.getId()); // Проверяем, что ID сгенерировался
-        assertEquals("valid_login", createdUser.getLogin());
+        assertEquals(uniqueLogin, createdUser.getLogin());
 
         // добавляем фильм
 
-        Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
+        Film film = Film.builder().name("Inception").mpa(Mpa.builder().id(1L).build()).description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
         ResponseEntity<Film> postResponseFilm = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(200, postResponseFilm.getStatusCode().value());
         Film createdFilm = postResponseFilm.getBody();
@@ -263,13 +270,14 @@ class FilmServiceTest {
     void findPopular() {
         // добавляем 11 фильмов
         for (int i = 0; i < 11; i++) {
-            Film film = Film.builder().name("Inception").description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
+            Film film = Film.builder().name("Inception").mpa(Mpa.builder().id(1L).build()).description("A thief who steals corporate secrets...").releaseDate(LocalDate.of(2010, 7, 16)).duration(148).build();
             ResponseEntity<Film> postResponse = restTemplate.postForEntity("/films", film, Film.class);
             assertEquals(200, postResponse.getStatusCode().value());
         }
         // добавляем 10 пользователей
         for (int i = 0; i < 10; i++) {
-            User user = User.builder().email("test@yandex.ru").login("valid_login").name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
+            String uniqueLogin = "login_" + System.currentTimeMillis();
+            User user = User.builder().email("test@yandex.ru").login(uniqueLogin).name("kosticin").birthday(LocalDate.of(1984, 6, 6)).build();
 
             ResponseEntity<User> postResponse = restTemplate.postForEntity("/users", user, User.class);
             assertEquals(200, postResponse.getStatusCode().value());

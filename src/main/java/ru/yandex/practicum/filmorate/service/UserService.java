@@ -5,22 +5,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserFriendStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class UserService {
     private final UserStorage userStorage;
+    private final UserFriendStorage userFriendStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(UserStorage userStorage, UserFriendStorage userFriendStorage) {
         this.userStorage = userStorage;
+        this.userFriendStorage = userFriendStorage;
     }
 
     public User create(User user) {
@@ -45,95 +45,65 @@ public class UserService {
             return new NoDataFoundException("При добавлении друзей, не найден пользователь с id " + userId);
         });
 
-        User friend = userStorage.get(friendUserId).orElseThrow(() -> {
+        userStorage.get(friendUserId).orElseThrow(() -> {
             log.error("При добавлении друзей, не найден пользователь с id {}", friendUserId);
             return new NoDataFoundException("При добавлении друзей, не найден пользователь с id " + friendUserId);
         });
 
-        Set<Long> friendsSet = user.getFriends();
-        if (friendsSet != null && !friendsSet.isEmpty() && friendsSet.contains(friendUserId)) {
+        Set<Long> currentFriends = userFriendStorage.findFriendIdByUserId(userId);
+        Set<Long> friendsSet = new HashSet<>(currentFriends != null ? currentFriends : Collections.emptySet());
+
+        if (friendsSet.contains(friendUserId)) {
             log.info("Друг с id {} уже является другом пользователю с ид {}.", friendUserId, userId);
         } else {
-            if (friendsSet == null) {
-                friendsSet = new HashSet<>();
-            }
             friendsSet.add(friendUserId);
+            userFriendStorage.saveFriend(userId, friendsSet);
+            log.info("Пользователю {} успешно добавлен новый друг {}", userId, friendUserId);
         }
 
-        Set<Long> friendFriendsSet = friend.getFriends();
-        if (friendFriendsSet != null && !friendFriendsSet.isEmpty() && friendFriendsSet.contains(userId)) {
-            log.info("Пользователь с id {} уже является другом пользователю с ид {}.", userId, friendUserId);
-        } else {
-            if (friendFriendsSet == null) {
-                friendFriendsSet = new HashSet<>();
-            }
-            friendFriendsSet.add(userId);
-        }
-
-        user.setFriends(friendsSet);
-        userStorage.update(user);
-        log.info("Пользователю {} успешно добавлен новый друг {}", userId, friendUserId);
-
-        friend.setFriends(friendFriendsSet);
-        userStorage.update(friend);
-        log.info("Пользователю {} успешно добавлен новый друг {}", friendUserId, userId);
-
-        return user;
+        return userStorage.get(userId).orElseThrow(() -> {
+            log.error("Ошибка при получении обновленного пользователя с id {}", userId);
+            return new NoDataFoundException("Пользователь с id " + userId + " не найден после обновления");
+        });
     }
 
     public User deleteFriend(Long userId, Long friendUserId) {
+
         User user = userStorage.get(userId).orElseThrow(() -> {
             log.error("При удалении друзей, не найден пользователь с id {}", userId);
             return new NoDataFoundException("При удалении друзей, не найден пользователь с id " + userId);
         });
 
-        User friend = userStorage.get(friendUserId).orElseThrow(() -> {
+        userStorage.get(friendUserId).orElseThrow(() -> {
             log.error("При удалении друзей, не найден пользователь с id {}", friendUserId);
             return new NoDataFoundException("При удалении друзей, не найден пользователь с id " + friendUserId);
         });
 
-        Set<Long> friendsSet = user.getFriends();
-        if (friendsSet == null || friendsSet.isEmpty() || !friendsSet.contains(friendUserId)) {
-            log.info("Друг с id {} уже не является другом пользователю с ид {}.", friendUserId, userId);
-        } else {
-            friendsSet.remove(friendUserId);
-        }
-
-        Set<Long> friendFriendsSet = friend.getFriends();
-        if (friendFriendsSet == null || friendFriendsSet.isEmpty() || !friendFriendsSet.contains(userId)) {
-            log.info("Пользователь с id {} уже не является другом пользователю с ид {}.", userId, friendUserId);
-        } else {
-            friendFriendsSet.remove(userId);
-        }
-
-        user.setFriends(friendsSet);
-        userStorage.update(user);
+        userFriendStorage.deleteByUserId(userId, friendUserId);
         log.info("Пользователю {} успешно удален друг {}", userId, friendUserId);
 
-        friend.setFriends(friendFriendsSet);
-        userStorage.update(friend);
-        log.info("Пользователю {} успешно удален друг {}", friendUserId, userId);
-
-        return user;
+        return userStorage.get(userId).orElseThrow(() ->
+                new NoDataFoundException("Пользователь не найден после удаления друга"));
     }
 
-
-    public Collection<User> findFriends(Long userId) {
+    public Set<User> findFriends(Long userId) {
 
         User user = userStorage.get(userId).orElseThrow(() -> {
             log.error("При поиске друзей, не найден пользователь с id {}", userId);
             return new NoDataFoundException("При поиске друзей, не найден пользователь с id " + userId);
         });
 
-        return Optional.ofNullable(user.getFriends())
-                .stream()
-                .flatMap(Collection::stream)
+        if (user.getFriends() == null) {
+            return Collections.emptySet();
+        }
+
+        return user.getFriends().stream()
                 .map(userStorage::get)
                 .flatMap(Optional::stream)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    public Collection<User> findCommonFriends(Long userId, Long otherId) {
+    public Set<User> findCommonFriends(Long userId, Long otherId) {
         Set<Long> userFriends = userStorage.get(userId)
                 .map(User::getFriends)
                 .orElseThrow(() -> new NoDataFoundException("Пользователь с id " + userId + " не найден"));
@@ -142,12 +112,23 @@ public class UserService {
                 .map(User::getFriends)
                 .orElseThrow(() -> new NoDataFoundException("Пользователь с id " + otherId + " не найден"));
 
+        if (userFriends == null || otherFriends == null) {
+            return Collections.emptySet();
+        }
+
+        Set<Long> commonIds = userFriends.stream()
+                .filter(otherFriends::contains)
+                .collect(Collectors.toSet());
+
+        if (commonIds.isEmpty()) {
+            return Collections.emptySet();
+        }
 
         return userFriends.stream()
                 .filter(otherFriends::contains)
                 .map(userStorage::get)
                 .flatMap(Optional::stream)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
 }

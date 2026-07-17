@@ -3,12 +3,14 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
+import java.util.Set;
 
 
 @Slf4j
@@ -45,18 +47,19 @@ public class UserController {
         return userService.addFriend(userId, friendId);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
-        return userService.deleteFriend(userId, friendId);
+    public void deleteFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
+        userService.deleteFriend(userId, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> findFriends(@PathVariable("id") long userId) {
+    public Set<User> findFriends(@PathVariable("id") long userId) {
         return userService.findFriends(userId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> findCommonFriends(@PathVariable("id") long userId, @PathVariable("otherId") long otherId) {
+    public Set<User> findCommonFriends(@PathVariable("id") long userId, @PathVariable("otherId") long otherId) {
         return userService.findCommonFriends(userId, otherId);
     }
 

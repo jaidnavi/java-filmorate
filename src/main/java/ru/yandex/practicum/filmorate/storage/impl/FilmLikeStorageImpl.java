@@ -1,0 +1,80 @@
+package ru.yandex.practicum.filmorate.storage.impl;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.model.FilmLike;
+import ru.yandex.practicum.filmorate.storage.FilmLikeStorage;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
+
+@Slf4j
+@RequiredArgsConstructor
+@Component
+public class FilmLikeStorageImpl implements FilmLikeStorage {
+    private final JdbcTemplate jdbcTemplate;
+
+    @Override
+    public void add(Long filmId, Long userId) {
+        String sql = """
+                MERGE INTO film_likes (film_id, user_id)
+                KEY (film_id, user_id)
+                VALUES (?, ?)
+                """;
+
+        jdbcTemplate.update(
+                sql,
+                filmId,
+                userId
+        );
+    }
+
+    @Override
+    public void delete(Long filmId, Long userId) {
+        String sql = """
+                DELETE FROM film_likes
+                WHERE film_id = ?
+                AND user_id = ?
+                """;
+
+        int rowsDeleted = jdbcTemplate.update(sql, filmId, userId);
+
+        if (rowsDeleted == 0) {
+            throw new NoDataFoundException(
+                    String.format("Лайк пользователя с id = %d для фильма с id = %d не найден", userId, filmId)
+            );
+        }
+    }
+
+    @Override
+    public Set<Long> findUserByFilmId(Long filmId) {
+        String sql = """
+                SELECT user_id
+                FROM film_likes
+                WHERE film_id = ?
+                """;
+
+        return jdbcTemplate.query(sql, rs -> {
+            Set<Long> userIds = new HashSet<>();
+            while (rs.next()) {
+                userIds.add(rs.getLong("user_id"));
+            }
+            return userIds;
+        }, filmId);
+    }
+
+    private FilmLike mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
+        FilmLike filmLike = new FilmLike();
+        filmLike.setFilmLikeId(rs.getLong("film_like_id"));
+        filmLike.setFilmId(rs.getLong("film_id"));
+        filmLike.setUserId(rs.getLong("user_id"));
+        return filmLike;
+    }
+
+
+}
