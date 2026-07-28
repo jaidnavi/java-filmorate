@@ -100,5 +100,8 @@ public class FilmService {
         return filmStorage.findPopular(count);
     }
 
+    public void delete(Long filmId) {
+        filmStorage.delete(filmId);
+    }
 
 }

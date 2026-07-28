@@ -54,13 +54,18 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Set<User> findFriends(@PathVariable("id") long userId) {
+    public Collection<User> findFriends(@PathVariable("id") long userId) {
         return userService.findFriends(userId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public Set<User> findCommonFriends(@PathVariable("id") long userId, @PathVariable("otherId") long otherId) {
         return userService.findCommonFriends(userId, otherId);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id") long userId) {
+        userService.delete(userId);
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 
@@ -57,6 +58,10 @@ public class DirectorStorageImpl implements DirectorStorage {
     @Override
     public Director create(Director director) {
 
+        if (director.getName().isBlank()) {
+            throw new ValidationException("ФИО режиссера не может быть пустым");
+        }
+
         String sql = "INSERT INTO directors (name) VALUES (?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -75,6 +80,11 @@ public class DirectorStorageImpl implements DirectorStorage {
 
     @Override
     public Director update(Director director) {
+
+        if (director.getName().isBlank()) {
+            throw new ValidationException("ФИО режиссера не может быть пустым");
+        }
+
         String sql = "UPDATE directors SET name = ? WHERE director_id = ?";
         int rowsUpdated = jdbcTemplate.update(sql,
                 director.getName(), director.getId());

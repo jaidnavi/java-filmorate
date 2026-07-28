@@ -278,4 +278,20 @@ public class FilmStorageImpl implements FilmStorage {
             return film;
         }
     }
+
+    @Override
+    public void delete(Long filmId) {
+        String sql = """
+                DELETE FROM films
+                WHERE film_id = ?
+                """;
+
+        jdbcTemplate.update(
+                sql,
+                filmId
+        );
+    }
+
+
+
 }

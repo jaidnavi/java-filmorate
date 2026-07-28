@@ -67,4 +67,9 @@ public class FilmController {
         return filmService.findPopular(count);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable("id") long filmId) {
+        filmService.delete(filmId);
+    }
+
 }

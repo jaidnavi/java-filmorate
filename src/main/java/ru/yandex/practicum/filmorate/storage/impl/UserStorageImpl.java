@@ -108,6 +108,20 @@ public class UserStorageImpl implements UserStorage {
         return users.stream().findFirst();
     }
 
+    @Override
+    public void delete(Long userId) {
+        String sql = """
+                DELETE FROM users
+                WHERE user_id = ?
+                """;
+
+        jdbcTemplate.update(
+                sql,
+                userId
+        );
+    }
+
+
     public static class UserMapper implements RowMapper<User> {
         @Override
         public User mapRow(ResultSet rs, int rowNum) throws SQLException {
