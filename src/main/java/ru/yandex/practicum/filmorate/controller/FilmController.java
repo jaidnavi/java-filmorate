@@ -33,6 +33,12 @@ public class FilmController {
                 .orElseThrow(() -> new NoDataFoundException("Фильм с id " + filmId + " не найден"));
     }
 
+    @GetMapping("/director/{id}")
+    public Collection<Film> findByDirector(@PathVariable("id") long directorId,
+                                           @RequestParam String sortBy) {
+        return filmService.getByDirector(directorId, sortBy);
+    }
+
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         return filmService.create(film);
