@@ -257,6 +257,11 @@ public class FilmStorageImpl implements FilmStorage {
     public Collection<Film> search(String query, List<String> by) {
         String lowerQuery = query.toLowerCase();
 
+        Set<SearchByType> searchTypes = by.stream()
+                .map(String::toUpperCase)
+                .map(SearchByType::valueOf)
+                .collect(Collectors.toSet());
+
         String sqlSelectMain = """
                 SELECT f.film_id
                 FROM films f
@@ -266,21 +271,21 @@ public class FilmStorageImpl implements FilmStorage {
         String sqlWhere;
         Object[] params;
 
-        if (by.contains("director") && by.contains("title")) {
+        if (searchTypes.contains(SearchByType.DIRECTOR) && searchTypes.contains(SearchByType.TITLE)) {
             sqlSelectAdd = """
                     LEFT JOIN film_directors fd ON fd.film_id = f.film_id
                     LEFT JOIN directors d ON d.director_id = fd.director_id
                     """;
             sqlWhere = " WHERE (LOWER(d.name) LIKE ? OR LOWER(f.name) LIKE ?) ";
             params = new Object[]{"%" + lowerQuery + "%", "%" + lowerQuery + "%"};
-        } else if (by.contains("director")) {
+        } else if (searchTypes.contains(SearchByType.DIRECTOR)) {
             sqlSelectAdd = """
                     LEFT JOIN film_directors fd ON fd.film_id = f.film_id
                     LEFT JOIN directors d ON d.director_id = fd.director_id
                     """;
             sqlWhere = " WHERE LOWER(d.name) LIKE ? ";
             params = new Object[]{"%" + lowerQuery + "%"};
-        } else if (by.contains("title")) {
+        } else if (searchTypes.contains(SearchByType.TITLE)) {
             sqlWhere = " WHERE LOWER(f.name) LIKE ? ";
             params = new Object[]{"%" + lowerQuery + "%"};
         } else {
