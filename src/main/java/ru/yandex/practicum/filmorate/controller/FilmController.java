@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
+import java.util.List;
 
 
 @Slf4j
@@ -70,6 +73,13 @@ public class FilmController {
     @DeleteMapping("/{id}")
     public void deleteFilm(@PathVariable("id") long filmId) {
         filmService.delete(filmId);
+    }
+
+    @GetMapping("/search")
+    public Collection<Film> search(
+            @RequestParam @NotBlank(message = "Текст для поиска не может быть пустым") String query,
+            @RequestParam @NotEmpty(message = "Должно быть указано поле для поиска") List<String> by) {
+        return filmService.search(query, by);
     }
 
 }
