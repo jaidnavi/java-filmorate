@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -14,8 +15,6 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +24,13 @@ import java.util.Optional;
 @Component
 public class DirectorStorageImpl implements DirectorStorage {
     private final JdbcTemplate jdbcTemplate;
-    private static final DirectorStorageImpl.DirectorMapper DIRECTOR_MAPPER = new DirectorStorageImpl.DirectorMapper();
+
+    private static final RowMapper<Director> DIRECTOR_MAPPER = new DataClassRowMapper<>(Director.class);
 
     @Override
     public Optional<Director> get(Long id) {
         String sql = """
-                SELECT f.director_id, f.name
+                SELECT f.director_id as id, f.name
                 FROM directors f
                 WHERE f.director_id = ?
                 """;
@@ -47,12 +47,12 @@ public class DirectorStorageImpl implements DirectorStorage {
     @Override
     public Collection<Director> findAll() {
         String sql = """
-                SELECT director_id, name
+                SELECT director_id as id, name
                 FROM directors
                 ORDER BY director_id
                 """;
 
-        return jdbcTemplate.query(sql, this::mapRowToGenre);
+        return jdbcTemplate.query(sql, DIRECTOR_MAPPER);
     }
 
     @Override
@@ -108,24 +108,6 @@ public class DirectorStorageImpl implements DirectorStorage {
                 sql,
                 directorId
         );
-    }
-
-    private Director mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
-        Director director = new Director();
-        director.setId(rs.getLong("director_id"));
-        director.setName(rs.getString("name"));
-        return director;
-    }
-
-    private static class DirectorMapper implements RowMapper<Director> {
-        @Override
-        public Director mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Director director = new Director();
-            director.setId(rs.getLong("director_id"));
-            director.setName(rs.getString("name"));
-
-            return director;
-        }
     }
 
 }

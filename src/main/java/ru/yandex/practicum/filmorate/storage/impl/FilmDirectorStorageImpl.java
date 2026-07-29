@@ -2,36 +2,66 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.storage.FilmDirectorStorage;
 
-import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class FilmDirectorStorageImpl implements FilmDirectorStorage {
     private final JdbcTemplate jdbcTemplate;
+    private static final RowMapper<Director> DIRECTOR_MAPPER = new DataClassRowMapper<>(Director.class);
 
     @Override
     public void replaceByFilmId(Long filmId, Set<Director> directors) {
         if (directors != null) {
             deleteByFilmId(filmId);
-            directors.stream()
+
+            if (directors.isEmpty()) {
+                return;
+            }
+
+            String sql = """
+                MERGE INTO film_directors (film_id, director_id)
+                KEY (film_id, director_id)
+                VALUES (?, ?)
+                """;
+
+            List<Long> directorIds = directors.stream()
                     .map(Director::getId)
-                    .forEach(id -> addDirector(filmId, id));
+                    .toList();
+
+            jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    ps.setLong(1, filmId);
+                    ps.setLong(2, directorIds.get(i));
+                }
+
+                @Override
+                public int getBatchSize() {
+                    return directorIds.size();
+                }
+            });
         }
     }
 
     @Override
     public Set<Director> findByFilmId(Long filmId) {
         String sql = """
-                SELECT  f.director_id AS director_id,
+                SELECT  f.director_id AS id,
                         g.name
                 FROM film_directors AS f
                 JOIN directors AS g ON f.director_id = g.director_id
@@ -39,7 +69,9 @@ public class FilmDirectorStorageImpl implements FilmDirectorStorage {
                 ORDER BY g.director_id
                 """;
 
-        return new LinkedHashSet<>(jdbcTemplate.query(sql, this::mapRowToDirector, filmId));
+        try (var stream = jdbcTemplate.queryForStream(sql, DIRECTOR_MAPPER, filmId)) {
+            return stream.collect(Collectors.toCollection(LinkedHashSet::new));
+        }
     }
 
     @Override
@@ -70,10 +102,4 @@ public class FilmDirectorStorageImpl implements FilmDirectorStorage {
         );
     }
 
-    private Director mapRowToDirector(ResultSet rs, int rowNum) throws SQLException {
-        Director director = new Director();
-        director.setId(rs.getLong("director_id"));
-        director.setName(rs.getString("name"));
-        return director;
-    }
 }
