@@ -127,13 +127,9 @@ public class FilmStorageImpl implements FilmStorage {
 
         List<Film> films = jdbcTemplate.query(sql, FILM_MAPPER);
 
-
         for (Film film : films) {
-
             film.setGenres(genreRefStorage.findByFilmId(film.getId()));
-
             film.setLikeUsers(filmLikeStorage.findUserByFilmId(film.getId()));
-
         }
 
         return films;
@@ -153,11 +149,8 @@ public class FilmStorageImpl implements FilmStorage {
 
         if (!films.isEmpty()) {
             Film film = films.get(0);
-
             film.setGenres(genreRefStorage.findByFilmId(filmId));
-
             film.setLikeUsers(filmLikeStorage.findUserByFilmId(filmId));
-
             return Optional.of(film);
         }
 
@@ -184,6 +177,54 @@ public class FilmStorageImpl implements FilmStorage {
                 .collect(Collectors.toList());
     }
 
+    public Collection<Film> search(String query, List<String> by) {
+        String lowerQuery = query.toLowerCase();
+
+        String sqlSelectMain = """
+                SELECT f.film_id
+                FROM films f
+                """;
+
+        String sqlSelectAdd = "";
+        String sqlWhere;
+        Object[] params;
+
+        if (by.contains("director") && by.contains("title")) {
+            sqlSelectAdd = """
+                    LEFT JOIN film_directors fd ON fd.film_id = f.film_id
+                    LEFT JOIN directors d ON d.director_id = fd.director_id
+                    """;
+            sqlWhere = " WHERE (LOWER(d.name) LIKE ? OR LOWER(f.name) LIKE ?) ";
+            params = new Object[]{"%" + lowerQuery + "%", "%" + lowerQuery + "%"};
+        } else if (by.contains("director")) {
+            sqlSelectAdd = """
+                    LEFT JOIN film_directors fd ON fd.film_id = f.film_id
+                    LEFT JOIN directors d ON d.director_id = fd.director_id
+                    """;
+            sqlWhere = " WHERE LOWER(d.name) LIKE ? ";
+            params = new Object[]{"%" + lowerQuery + "%"};
+        } else if (by.contains("title")) {
+            sqlWhere = " WHERE LOWER(f.name) LIKE ? ";
+            params = new Object[]{"%" + lowerQuery + "%"};
+        } else {
+            throw new ValidationException("Поиск по полю " + by + " не реализован");
+        }
+
+        String sqlOrder = """
+                    ORDER BY f.film_id
+                    """;
+
+        String sql = sqlSelectMain + sqlSelectAdd + sqlWhere + sqlOrder;
+        log.info(sql);
+
+        List<Long> searchFilmIds = jdbcTemplate.queryForList(sql, Long.class, params);
+
+        return searchFilmIds.stream()
+                .map(filmId -> get(filmId).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
     private static class FilmMapper implements RowMapper<Film> {
         @Override
         public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -205,4 +246,5 @@ public class FilmStorageImpl implements FilmStorage {
             return film;
         }
     }
+
 }

@@ -89,5 +89,8 @@ public class FilmService {
         return filmStorage.findPopular(count);
     }
 
+    public Collection<Film> search(String query, List<String> by) {
+        return filmStorage.search(query, by);
+    }
 
 }
