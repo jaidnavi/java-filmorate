@@ -69,9 +69,8 @@ public class FilmDirectorStorageImpl implements FilmDirectorStorage {
                 ORDER BY g.director_id
                 """;
 
-        try (var stream = jdbcTemplate.queryForStream(sql, DIRECTOR_MAPPER, filmId)) {
-            return stream.collect(Collectors.toCollection(LinkedHashSet::new));
-        }
+        List<Director> directors = jdbcTemplate.query(sql, DIRECTOR_MAPPER, filmId);
+        return new LinkedHashSet<>(directors);
     }
 
     @Override
