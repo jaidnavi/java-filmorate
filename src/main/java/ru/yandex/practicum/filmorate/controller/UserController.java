@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Events;
+import ru.yandex.practicum.filmorate.model.OperationType;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -48,7 +50,7 @@ public class UserController {
     @PutMapping("/{id}/friends/{friendId}")
     public User addFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
         User user = userService.addFriend(userId, friendId);
-        eventsService.addNewEvent(userId,"FRIEND",friendId,"ADD");
+        eventsService.addNewEvent(userId,EventType.FRIEND,friendId, OperationType.ADD);
         return user;
     }
 
@@ -56,7 +58,7 @@ public class UserController {
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
         userService.deleteFriend(userId, friendId);
-        eventsService.addNewEvent(userId,"FRIEND",friendId,"REMOVE");
+        eventsService.addNewEvent(userId, EventType.FRIEND,friendId,OperationType.REMOVE);
     }
 
     @GetMapping("/{id}/friends")

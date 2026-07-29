@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.OperationType;
 import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -48,13 +50,13 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public void likeFilm(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
         filmService.addLike(filmId, userId);
-        eventsService.addNewEvent(userId,"LIKE",filmId,"ADD");
+        eventsService.addNewEvent(userId, EventType.LIKE,filmId, OperationType.ADD);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
         filmService.deleteLike(filmId, userId);
-        eventsService.addNewEvent(userId,"LIKE",filmId,"REMOVE");
+        eventsService.addNewEvent(userId,EventType.LIKE,filmId,OperationType.REMOVE);
     }
 
     @GetMapping("/popular")

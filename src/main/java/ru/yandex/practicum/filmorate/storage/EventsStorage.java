@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Events;
+import ru.yandex.practicum.filmorate.model.OperationType;
 
 import java.util.Collection;
 
@@ -15,7 +17,7 @@ public interface EventsStorage {
      * @param entityId идентификатор сущности с которой связано событие
      * @param operation операция события
      */
-    void addNewEvent(Long userId,String eventType, Long entityId, String operation);
+    void addNewEvent(Long userId, EventType eventType, Long entityId, OperationType operation);
 
     /** Метод возвращает ленту событий пользователя.
      * @param userId идентификатор пользователя у которого нужно вернуть ленту

@@ -27,12 +27,12 @@ public class EventsStorageImpl implements EventsStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public void addNewEvent(Long userId, String eventType, Long entityId, String operation) {
+    public void addNewEvent(Long userId, EventType eventType, Long entityId, OperationType operation) {
         String insert = """
                 INSERT INTO events (user_id, event_type, entity_id, operation, timestamp)
                 VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
                 """;
-            int rowsInserted = jdbcTemplate.update(insert, userId, eventType, entityId, operation);
+            int rowsInserted = jdbcTemplate.update(insert, userId, eventType.toString(), entityId, operation.toString());
             if (rowsInserted == 0) {
                 throw new InternalServerException("Не удалось вставить данные в таблицу events");
             } else {

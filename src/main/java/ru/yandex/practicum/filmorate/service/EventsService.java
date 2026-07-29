@@ -26,7 +26,7 @@ public class EventsService {
         this.userService = userService;
     }
 
-    public void addNewEvent(Long userId, String eventType, Long entityId, String operation) {
+    public void addNewEvent(Long userId, EventType eventType, Long entityId, OperationType operation) {
         if (userId != null) {
             Optional<User> user = userService.get(userId);
             if (user.isEmpty()) {
@@ -35,25 +35,13 @@ public class EventsService {
         } else {
             throw new ValidationException("Не указан идентификатор пользователя");
         }
-        if (eventType != null) {
-            try {
-                EventType.valueOf(eventType);
-            } catch (IllegalArgumentException e) {
-                throw new ValidationException("Неверный код события " + eventType + ". Допустимы LIKE,REVIEW,FRIEND.");
-            }
-        } else {
+        if (eventType == null) {
             throw new ValidationException("Не указан тип события");
         }
         if (entityId == null) {
             throw new ValidationException("Не указан идентификатор сущности события");
         }
-        if (operation != null) {
-            try {
-                OperationType.valueOf(operation);
-            } catch (IllegalArgumentException e) {
-                throw new ValidationException("Неверный код операции " + operation + ". Допустимы REMOVE, ADD, UPDATE.");
-            }
-        } else {
+        if (operation == null) {
             throw new ValidationException("Не указан код операции для события");
         }
         eventsStorage.addNewEvent(userId,eventType,entityId,operation);
