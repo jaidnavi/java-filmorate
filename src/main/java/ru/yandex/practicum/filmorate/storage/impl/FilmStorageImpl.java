@@ -292,8 +292,6 @@ public class FilmStorageImpl implements FilmStorage {
                     """;
 
         String sql = sqlSelectMain + sqlSelectAdd + sqlWhere + sqlOrder;
-        log.info(sql);
-
         List<Long> searchFilmIds = jdbcTemplate.queryForList(sql, Long.class, params);
 
         return searchFilmIds.stream()

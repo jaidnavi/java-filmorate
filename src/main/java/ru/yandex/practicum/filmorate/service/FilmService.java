@@ -103,6 +103,7 @@ public class FilmService {
     public void delete(Long filmId) {
         filmStorage.delete(filmId);
     }
+
     public Collection<Film> search(String query, List<String> by) {
         return filmStorage.search(query, by);
     }
