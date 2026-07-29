@@ -184,6 +184,44 @@ public class FilmStorageImpl implements FilmStorage {
                 .collect(Collectors.toList());
     }
 
+    public Collection<Film> findRecommendations(Long userId) {
+        String sql = """
+                WITH ranked_users AS (
+                SELECT
+                    fl2.user_id,
+                    DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) as rnk
+                FROM film_likes fl1
+                JOIN FILM_LIKES fl2 ON fl1.film_id = fl2.film_id
+                WHERE fl1.user_id = ?
+                  AND fl2.user_id != ?
+                GROUP BY fl2.user_id
+                ),
+                top_similar_users AS (
+                    SELECT user_id
+                    FROM ranked_users
+                    WHERE rnk = 1
+                )
+                SELECT DISTINCT fl3.film_id
+                FROM film_likes fl3
+                WHERE fl3.user_id IN (SELECT user_id FROM top_similar_users)
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM film_likes fl4
+                      WHERE fl4.user_id = ?
+                        AND fl4.film_id = fl3.film_id
+                  )
+                """;
+
+        List<Long> recommendationsFilmIds = jdbcTemplate.queryForList(sql, Long.class, userId, userId, userId);
+
+        return recommendationsFilmIds.stream()
+                .map(filmId -> get(filmId).orElse(null))
+                .filter(Objects::nonNull) // Защита от пустых значений
+                .collect(Collectors.toList());
+
+    }
+
+
     private static class FilmMapper implements RowMapper<Film> {
         @Override
         public Film mapRow(ResultSet rs, int rowNum) throws SQLException {

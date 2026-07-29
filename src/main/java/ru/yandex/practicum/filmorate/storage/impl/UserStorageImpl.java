@@ -11,10 +11,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class UserStorageImpl implements UserStorage {
@@ -110,6 +107,7 @@ public class UserStorageImpl implements UserStorage {
 
         return users.stream().findFirst();
     }
+
 
     public static class UserMapper implements RowMapper<User> {
         @Override
