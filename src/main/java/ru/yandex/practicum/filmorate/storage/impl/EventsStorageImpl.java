@@ -50,7 +50,7 @@ public class EventsStorageImpl implements EventsStorage {
                     SELECT event_id, user_id, event_type, entity_id, operation, timestamp
                       FROM events
                      WHERE user_id = ?
-                    ORDER BY timestamp desc
+                    ORDER BY event_id
                     """;
         try {
             return jdbcTemplate.query(sql, this::mapRowToEvents, userId);
@@ -66,7 +66,7 @@ public class EventsStorageImpl implements EventsStorage {
         events.setEventType(EventType.valueOf(rs.getString("event_type")));
         events.setEntityId(rs.getLong("entity_id"));
         events.setOperation(OperationType.valueOf(rs.getString("operation")));
-        events.setTimestamp(rs.getTimestamp("timestamp"));
+        events.setTimestamp(rs.getTimestamp("timestamp").toInstant().toEpochMilli());
         return events;
     }
 
@@ -75,7 +75,7 @@ public class EventsStorageImpl implements EventsStorage {
         String sql = """
                     SELECT event_id, user_id, event_type, entity_id, operation, timestamp
                       FROM events
-                    ORDER BY timestamp desc
+                    ORDER BY event_id
                     """;
         try {
             return jdbcTemplate.query(sql, this::mapRowToEvents);

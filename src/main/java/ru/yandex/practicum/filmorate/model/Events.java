@@ -45,9 +45,9 @@ public class Events {
     private OperationType operation;
 
     /**
-     * Дата и время события
+     * Временная метка даты (в милисекундах)
      */
-    private Timestamp timestamp;
+    private Long timestamp;
 
     /**
      * Идентификатор сущности, с которой произошло событие

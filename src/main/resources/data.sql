@@ -6,6 +6,7 @@ DELETE FROM users;
 DELETE FROM films;
 DELETE FROM mpa;
 DELETE FROM genre;
+DELETE FROM events;
 
 -- сброс сиквенсов
 ALTER TABLE genre_ref ALTER COLUMN genre_ref_id RESTART WITH 1;
@@ -15,6 +16,7 @@ ALTER TABLE users ALTER COLUMN user_id RESTART WITH 1;
 ALTER TABLE films ALTER COLUMN film_id RESTART WITH 1;
 ALTER TABLE mpa ALTER COLUMN mpa_id RESTART WITH 1;
 ALTER TABLE genre ALTER COLUMN genre_id RESTART WITH 1;
+ALTER TABLE events ALTER COLUMN event_id RESTART WITH 1;
 
 -- Заполнение или обновление рейтингов MPA
 
