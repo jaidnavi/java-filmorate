@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmLikeStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -89,5 +90,20 @@ public class FilmService {
         return filmStorage.findPopular(count);
     }
 
+    public Collection<Film> findCommon(Long userId, Long friendId) {
+        if (Objects.equals(userId, friendId)) {
+            throw new ValidationException("Идентификатор пользователя и друга совпадают. Это недопустимо");
+        }
+        userStorage.get(userId).orElseThrow(() -> {
+            log.error("При поиске общих фильмов, не найден пользователь с id {}", userId);
+            return new NoDataFoundException("При поиске общих фильмов, не найден пользователь с id " + userId);
+        });
+        userStorage.get(friendId).orElseThrow(() -> {
+            log.error("При поиске общих фильмов, не найден друг с id {}", friendId);
+            return new NoDataFoundException("При поиске общих фильмов, не найден друг с id " + friendId);
+        });
+        log.info("Запрос на получение общих фильмов между пользователем с userId={} и его другом c friendId={}", userId, friendId);
+        return filmStorage.findCommon(userId,friendId);
+    }
 
 }

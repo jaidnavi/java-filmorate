@@ -61,4 +61,14 @@ public class FilmController {
         return filmService.findPopular(count);
     }
 
+    /** Эндпоинт возвращает список общих с другом фильмов, отсортированных по популярности.
+     * @param userId Идентификатор пользователя
+     * @param friendId Идентификатор друга
+     * @return список фильмов
+     */
+    @GetMapping("/common")
+    public Collection<Film> findCommon(@RequestParam long userId,
+                                       @RequestParam long friendId) {
+        return filmService.findCommon(userId,friendId);
+    }
 }

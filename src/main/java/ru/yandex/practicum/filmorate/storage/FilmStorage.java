@@ -15,4 +15,11 @@ public interface FilmStorage {
     Optional<Film> get(Long filmId);
 
     Collection<Film> findPopular(int count);
+
+    /** Метод возвращает список общих с другом фильмов, отсортированных по популярности.
+     * @param userId Идентификатор пользователя
+     * @param friendId Идентификатор друга
+     * @return список фильмов
+     */
+    Collection<Film> findCommon(Long userId, Long friendId);
 }
