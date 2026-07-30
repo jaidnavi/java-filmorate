@@ -32,21 +32,21 @@ public class ReviewController {
     @PostMapping
     public Review create(@Valid @RequestBody Review review) {
         Review result = reviewService.create(review);
-        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getFilmId(), OperationType.ADD);
+        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getReviewId(), OperationType.ADD);
         return result;
     }
 
     @PutMapping
     public Review update(@Valid @RequestBody Review review) {
         Review result = reviewService.update(review);
-        eventsService.addNewEvent(result.getUserId(), EventType.REVIEW, result.getFilmId(), OperationType.UPDATE);
+        eventsService.addNewEvent(result.getUserId(), EventType.REVIEW, result.getReviewId(), OperationType.UPDATE);
         return result;
     }
 
     @DeleteMapping("/{id}")
     public void deleteReviewById(@PathVariable("id") Long reviewId) {
         Review review = reviewService.deleteReviewById(reviewId);
-        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getFilmId(), OperationType.REMOVE);
+        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getReviewId(), OperationType.REMOVE);
     }
 
     @GetMapping("/{id}")
@@ -66,13 +66,11 @@ public class ReviewController {
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable("id") Long reviewId, @PathVariable("userId") Long userId) {
         reviewService.addLike(reviewId, userId);
-     //   eventsService.addNewEvent(userId, EventType.LIKE, reviewId, OperationType.ADD);
     }
 
     @PutMapping("/{id}/dislike/{userId}")
     public void addDislike(@PathVariable("id") Long reviewId, @PathVariable("userId") Long userId) {
         reviewService.addDislike(reviewId, userId);
-        //  eventsService.addNewEvent(userId,EventType.LIKE,reviewId,OperationType.REMOVE);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
