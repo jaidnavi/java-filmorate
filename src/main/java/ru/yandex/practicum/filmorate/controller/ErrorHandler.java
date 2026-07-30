@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -50,6 +51,13 @@ public class ErrorHandler {
 
         log.warn("Ошибка валидации: {}", description);
         return new ErrorResponse("Ошибка валидации", description);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleHttpMessageNotReadable(final HttpMessageNotReadableException e) {
+        log.warn("Получен запрос с пустым или нечитаемым телом (JSON отсутствует): {}", e.getMessage());
+        return new ErrorResponse("Ошибка запроса", "Тело запроса отсутствует или не может быть прочитано");
     }
 
 }

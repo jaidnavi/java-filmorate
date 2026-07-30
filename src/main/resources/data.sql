@@ -8,8 +8,9 @@ DELETE FROM mpa;
 DELETE FROM genre;
 DELETE FROM reviews;
 DELETE FROM review_likes;
-
-
+DELETE FROM directors;
+DELETE FROM film_directors;
+DELETE FROM events;
 
 -- сброс сиквенсов
 ALTER TABLE genre_ref ALTER COLUMN genre_ref_id RESTART WITH 1;
@@ -21,6 +22,9 @@ ALTER TABLE mpa ALTER COLUMN mpa_id RESTART WITH 1;
 ALTER TABLE genre ALTER COLUMN genre_id RESTART WITH 1;
 ALTER TABLE reviews ALTER COLUMN review_id RESTART WITH 1;
 ALTER TABLE review_likes ALTER COLUMN review_like_id RESTART WITH 1;
+ALTER TABLE directors ALTER COLUMN director_id RESTART WITH 1;
+ALTER TABLE film_directors ALTER COLUMN film_director_id RESTART WITH 1;
+ALTER TABLE events ALTER COLUMN event_id RESTART WITH 1;
 
 -- Заполнение или обновление рейтингов MPA
 

@@ -5,11 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
-import ru.yandex.practicum.filmorate.model.FilmLike;
 import ru.yandex.practicum.filmorate.storage.FilmLikeStorage;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -67,14 +64,5 @@ public class FilmLikeStorageImpl implements FilmLikeStorage {
             return userIds;
         }, filmId);
     }
-
-    private FilmLike mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
-        FilmLike filmLike = new FilmLike();
-        filmLike.setFilmLikeId(rs.getLong("film_like_id"));
-        filmLike.setFilmId(rs.getLong("film_id"));
-        filmLike.setUserId(rs.getLong("user_id"));
-        return filmLike;
-    }
-
 
 }
