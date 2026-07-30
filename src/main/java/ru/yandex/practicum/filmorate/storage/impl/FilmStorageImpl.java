@@ -254,6 +254,7 @@ public class FilmStorageImpl implements FilmStorage {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public Collection<Film> search(String query, List<String> by) {
         String lowerQuery = query.toLowerCase();
 
@@ -305,6 +306,19 @@ public class FilmStorageImpl implements FilmStorage {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void delete(Long filmId) {
+        String sql = """
+                DELETE FROM films
+                WHERE film_id = ?
+                """;
+
+        jdbcTemplate.update(
+                sql,
+                filmId
+        );
+    }
+
     private static class FilmMapper implements RowMapper<Film> {
         @Override
         public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -326,21 +340,5 @@ public class FilmStorageImpl implements FilmStorage {
             return film;
         }
     }
-
-    @Override
-    public void delete(Long filmId) {
-        String sql = """
-                DELETE FROM films
-                WHERE film_id = ?
-                """;
-
-        jdbcTemplate.update(
-                sql,
-                filmId
-        );
-    }
-
-
-
 
 }
