@@ -444,4 +444,30 @@ public class FilmStorageImpl implements FilmStorage {
         }
     }
 
+    public Collection<Film> findCommon(Long userId, Long friendId) {
+        String sql = """
+                SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, m.name AS mpa_name
+                  FROM (SELECT fl_us.film_id,
+                			   (SELECT COUNT(*)
+                				  FROM film_likes fl
+                				 WHERE film_id = fl_us.film_id) popularity
+                		FROM film_likes fl_us
+                		JOIN film_likes fl_fr ON fl_us.film_id = fl_fr.film_id
+                		WHERE fl_us.user_id = ?
+                		      AND fl_fr.user_id = ?
+                	   ) s
+                	   JOIN films f ON f.film_id = s.film_id
+                	   LEFT JOIN mpa m ON f.mpa_id = m.mpa_id
+                ORDER BY s.popularity desc
+                """;
+
+        List<Film> films = jdbcTemplate.query(sql, FILM_MAPPER, userId, friendId);
+
+        for (Film film : films) {
+            film.setGenres(genreRefStorage.findByFilmId(film.getId()));
+            film.setLikeUsers(filmLikeStorage.findUserByFilmId(film.getId()));
+        }
+        return films;
+    }
+
 }
