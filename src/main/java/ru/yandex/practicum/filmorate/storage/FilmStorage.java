@@ -20,6 +20,7 @@ public interface FilmStorage {
     Collection<Film> findPopular(int count);
 
     Collection<Film> findRecommendations(Long userId);
+
     Collection<Film> search(String query, List<String> by);
 
     void delete(Long filmId);

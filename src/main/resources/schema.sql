@@ -83,6 +83,6 @@ create table if not exists events
     entity_id  bigint,
     event_type character varying(100),
     operation character varying(100),
-    user_id bigint references users(user_id) on delete cascade,
+    user_id bigint references users(user_id) on delete set null,
     timestamp timestamp
 );
