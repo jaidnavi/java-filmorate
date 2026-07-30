@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Events;
 import ru.yandex.practicum.filmorate.model.OperationType;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -62,7 +63,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Set<User> findFriends(@PathVariable("id") long userId) {
+    public Collection<User> findFriends(@PathVariable("id") long userId) {
         return userService.findFriends(userId);
     }
 
@@ -91,4 +92,14 @@ public class UserController {
     public Collection<Events> getAllFeed() {
         return eventsService.getAllFeed();
     }
+    @GetMapping("/{id}/recommendations")
+    public Collection<Film> findCommonFriends(@PathVariable("id") long userId) {
+        return userService.findRecommendations(userId);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id") long userId) {
+        userService.delete(userId);
+    }
+
 }
