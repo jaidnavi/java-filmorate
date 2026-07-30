@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -40,17 +41,26 @@ public class ReviewService {
         return savedReview;
     }
 
-    public Review update(Review review) {
-        if (review.getReviewId() == null) {
+    public Review update(Review newReview) {
+        if (newReview.getReviewId() == null) {
             log.warn("При обновлении отзыва не передан id");
             throw new ValidationException("Поле id должно быть заполнено");
         }
-        getUserById(review.getUserId());
-        getFilmById(review.getFilmId());
+        Review updatedReview = get(newReview.getReviewId());
+        if (!Objects.equals(updatedReview.getUserId(), newReview.getUserId())) {
+            log.warn("При обновлении отзыва не совпадает userId");
+            throw new ValidationException("При обновлении отзыва нельзя изменить фильм");
+        }
+        if (!Objects.equals(updatedReview.getFilmId(), newReview.getFilmId())) {
+            log.warn("При обновлении отзыва не совпадает filmId");
+            throw new ValidationException("При обновлении отзыва нельзя изменить пользователя");
+        }
+        getUserById(newReview.getUserId());
+        getFilmById(newReview.getFilmId());
 
-        Review updatedReview = reviewStorage.update(review);
-        log.info("Обновлен отзыв с id = {}", updatedReview.getReviewId());
-        return updatedReview;
+        Review review = reviewStorage.update(newReview);
+        log.info("Обновлен отзыв с id = {}", review.getReviewId());
+        return review;
     }
 
     public Collection<Review> findAll(int count) {

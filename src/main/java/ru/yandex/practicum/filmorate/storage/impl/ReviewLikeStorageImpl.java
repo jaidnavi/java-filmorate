@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.InternalServerException;
+import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.storage.ReviewLikeStorage;
 
 @Component
@@ -25,19 +25,21 @@ public class ReviewLikeStorageImpl implements ReviewLikeStorage {
 
     @Override
     public void deleteLike(Long reviewId, Long userId) {
-        String sql = "DELETE FROM review_likes WHERE review_id = ? AND user_id = ?";
+        String sql = "DELETE FROM review_likes WHERE review_id = ? AND user_id = ? AND is_positive = true";
         int rowsDeleted = jdbcTemplate.update(sql, reviewId, userId);
         if (rowsDeleted == 0) {
-            throw new InternalServerException("Не удалось удалить лайк к отзыву с id = " + reviewId);
+            throw new NoDataFoundException("Лайк к отзыву с id = " + reviewId +
+                    " от пользователя с id = " + userId + " не найден.");
         }
     }
 
     @Override
     public void deleteDislike(Long reviewId, Long userId) {
-        String sql = "DELETE FROM review_likes WHERE review_id = ? AND user_id = ?";
+        String sql = "DELETE FROM review_likes WHERE review_id = ? AND user_id = ? AND is_positive = false";
         int rowsDeleted = jdbcTemplate.update(sql, reviewId, userId);
         if (rowsDeleted == 0) {
-            throw new InternalServerException("Не удалось удалить дизлайк к отзыву с id = " + reviewId);
+            throw new NoDataFoundException("Дизлайк к отзыву с id = " + reviewId +
+                    " от пользователя с id = " + userId + " не найден.");
         }
     }
 
