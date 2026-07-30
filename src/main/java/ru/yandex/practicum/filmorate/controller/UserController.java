@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -63,6 +64,9 @@ public class UserController {
         return userService.findCommonFriends(userId, otherId);
     }
 
+    @GetMapping("/{id}/recommendations")
+    public Collection<Film> findCommonFriends(@PathVariable("id") long userId) {
+        return userService.findRecommendations(userId);
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable("id") long userId) {
         userService.delete(userId);

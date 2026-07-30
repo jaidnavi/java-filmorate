@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserFriendStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -16,11 +18,13 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserStorage userStorage;
     private final UserFriendStorage userFriendStorage;
+    private final FilmStorage filmStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage, UserFriendStorage userFriendStorage) {
+    public UserService(UserStorage userStorage, UserFriendStorage userFriendStorage, FilmStorage filmStorage) {
         this.userStorage = userStorage;
         this.userFriendStorage = userFriendStorage;
+        this.filmStorage = filmStorage;
     }
 
     public User create(User user) {
@@ -131,6 +135,13 @@ public class UserService {
                 .collect(Collectors.toSet());
     }
 
+    public Collection<Film> findRecommendations(Long userId) {
+        User user = userStorage.get(userId).orElseThrow(() -> {
+            log.error("При поиске друзей, не найден пользователь с id {}", userId);
+            return new NoDataFoundException("При поиске друзей, не найден пользователь с id " + userId);
+        });
+
+        return filmStorage.findRecommendations(userId);
     public void delete(Long userId) {
         userStorage.delete(userId);
     }
