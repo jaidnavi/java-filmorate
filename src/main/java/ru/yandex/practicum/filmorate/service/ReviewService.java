@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.User;
@@ -14,7 +14,6 @@ import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -45,15 +44,6 @@ public class ReviewService {
         if (newReview.getReviewId() == null) {
             log.warn("При обновлении отзыва не передан id");
             throw new ValidationException("Поле id должно быть заполнено");
-        }
-        Review updatedReview = get(newReview.getReviewId());
-        if (!Objects.equals(updatedReview.getUserId(), newReview.getUserId())) {
-            log.warn("При обновлении отзыва не совпадает userId");
-            throw new ValidationException("При обновлении отзыва нельзя изменить фильм");
-        }
-        if (!Objects.equals(updatedReview.getFilmId(), newReview.getFilmId())) {
-            log.warn("При обновлении отзыва не совпадает filmId");
-            throw new ValidationException("При обновлении отзыва нельзя изменить пользователя");
         }
         getUserById(newReview.getUserId());
         getFilmById(newReview.getFilmId());

@@ -77,7 +77,7 @@ public class ReviewStorageImpl implements ReviewStorage {
                 "FROM reviews r " +
                 "LEFT JOIN review_likes rl ON r.review_id = rl.review_id " +
                 "GROUP BY r.review_id " +
-                "ORDER BY useful DESC, r.review_id DESC " +
+                "ORDER BY useful DESC " +
                 "LIMIT ?";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
@@ -98,7 +98,7 @@ public class ReviewStorageImpl implements ReviewStorage {
                 "LEFT JOIN review_likes rl ON r.review_id = rl.review_id " +
                 "WHERE r.film_id = ? " +
                 "GROUP BY r.review_id " +
-                "ORDER BY useful DESC, r.review_id DESC " +
+                "ORDER BY useful DESC " +
                 "LIMIT ?";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
