@@ -68,14 +68,6 @@ public class FilmController {
         eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.REMOVE);
     }
 
-    @GetMapping("/popular")
-    public Collection<Film> findPopular(
-            @RequestParam(defaultValue = DEFAULT_COUNT_POPULAR_FILMS, required = false)
-            @Positive(message = "Параметр count должен быть больше нуля")
-            Integer count) {
-        return filmService.findPopular(count);
-    }
-
     @DeleteMapping("/{id}")
     public void deleteFilm(@PathVariable("id") long filmId) {
         filmService.delete(filmId);
