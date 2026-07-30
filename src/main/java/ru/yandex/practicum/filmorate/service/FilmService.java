@@ -100,6 +100,18 @@ public class FilmService {
         return filmStorage.findPopular(count);
     }
 
+    public Collection<Film> findPopularByGenreAndYear(int count, Long genreId, Integer year) {
+        return filmStorage.findPopularByGenreAndYear(count, genreId, year);
+    }
+
+    public Collection<Film> findPopularByGenre(int count, Long genreId) {
+        return filmStorage.findPopularByGenre(count, genreId);
+    }
+
+    public Collection<Film> findPopularByYear(int count, Integer year) {
+        return filmStorage.findPopularByYear(count, year);
+    }
+
     public void delete(Long filmId) {
         filmStorage.delete(filmId);
     }

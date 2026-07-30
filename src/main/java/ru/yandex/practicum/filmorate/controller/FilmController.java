@@ -88,4 +88,23 @@ public class FilmController {
         return filmService.search(query, by);
     }
 
+    @GetMapping("/popular")
+    public Collection<Film> findPopularByGenreAndYear(
+            @RequestParam(defaultValue = DEFAULT_COUNT_POPULAR_FILMS)
+            @Positive(message = "Параметр count должен быть больше нуля")
+            int count,
+            @RequestParam(required = false) Long genreId,
+            @RequestParam(required = false) Integer year) {
+        if (genreId == null && year == null) {
+            return filmService.findPopular(count);
+        }
+        if (year == null) {
+            return filmService.findPopularByGenre(count, genreId);
+        }
+        if (genreId == null) {
+            return filmService.findPopularByYear(count, year);
+        }
+        return filmService.findPopularByGenreAndYear(count, genreId, year);
+
+    }
 }
