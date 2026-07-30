@@ -331,8 +331,8 @@ public class FilmStorageImpl implements FilmStorage {
         }
 
         String sqlOrder = """
-                    ORDER BY f.film_id DESC
-                    """;
+                ORDER BY f.film_id DESC
+                """;
 
         String sql = sqlSelectMain + sqlSelectAdd + sqlWhere + sqlOrder;
         List<Long> searchFilmIds = jdbcTemplate.queryForList(sql, Long.class, params);
@@ -354,6 +354,72 @@ public class FilmStorageImpl implements FilmStorage {
                 sql,
                 filmId
         );
+    }
+
+    @Override
+    public Collection<Film> findPopularByGenreAndYear(int count, Long genreId, Integer year) {
+
+        String sql = """
+                SELECT f.film_id
+                FROM films f
+                INNER JOIN genre_ref gr ON f.film_id = gr.film_id
+                LEFT JOIN film_likes fl ON f.film_id = fl.film_id
+                WHERE gr.genre_id = ? AND EXTRACT(YEAR FROM f.release_date) = ?
+                GROUP BY f.film_id
+                ORDER BY COUNT(fl.user_id) DESC, f.film_id ASC
+                LIMIT ?
+                """;
+
+        List<Long> popularFilmIds = jdbcTemplate.queryForList(sql, Long.class, genreId, year, count);
+
+        return popularFilmIds.stream()
+                .map(filmId -> get(filmId).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Film> findPopularByGenre(int count, Long genreId) {
+
+        String sql = """
+                SELECT f.film_id
+                FROM films f
+                INNER JOIN genre_ref gr ON f.film_id = gr.film_id
+                LEFT JOIN film_likes fl ON f.film_id = fl.film_id
+                WHERE gr.genre_id = ?
+                GROUP BY f.film_id
+                ORDER BY COUNT(fl.user_id) DESC, f.film_id ASC
+                LIMIT ?
+                """;
+
+        List<Long> popularFilmIds = jdbcTemplate.queryForList(sql, Long.class, genreId, count);
+
+        return popularFilmIds.stream()
+                .map(filmId -> get(filmId).orElse(null))
+                .filter(Objects::nonNull) // Защита от пустых значений
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Film> findPopularByYear(int count, Integer year) {
+
+        String sql = """
+                SELECT f.film_id
+                FROM films f
+                INNER JOIN genre_ref gr ON f.film_id = gr.film_id
+                LEFT JOIN film_likes fl ON f.film_id = fl.film_id
+                WHERE EXTRACT(YEAR FROM f.release_date) = ?
+                GROUP BY f.film_id
+                ORDER BY COUNT(fl.user_id) DESC, f.film_id ASC
+                LIMIT ?
+                """;
+
+        List<Long> popularFilmIds = jdbcTemplate.queryForList(sql, Long.class, year, count);
+
+        return popularFilmIds.stream()
+                .map(filmId -> get(filmId).orElse(null))
+                .filter(Objects::nonNull) // Защита от пустых значений
+                .collect(Collectors.toList());
     }
 
     private static class FilmMapper implements RowMapper<Film> {
