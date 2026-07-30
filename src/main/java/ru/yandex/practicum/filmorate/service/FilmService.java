@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmLikeStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -19,17 +20,27 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
     private final FilmLikeStorage filmLikeStorage;
+    private final DirectorStorage directorStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage, FilmLikeStorage filmLikeStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, FilmLikeStorage filmLikeStorage, DirectorStorage directorStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.filmLikeStorage = filmLikeStorage;
+        this.directorStorage = directorStorage;
     }
 
     public Collection<Film> findAll() {
         return filmStorage.findAll();
     }
+
+    public Collection<Film> getByDirector(Long directorId, String sortBy) {
+        directorStorage.get(directorId)
+                .orElseThrow(() -> new NoDataFoundException("Режиссер с id " + directorId + " не найден"));
+
+        return filmStorage.getByDirector(directorId, sortBy);
+    }
+
 
     public Film create(Film film) {
         return filmStorage.create(film);
@@ -88,6 +99,26 @@ public class FilmService {
     public Collection<Film> findPopular(int count) {
         log.info("Запрос на получение топ-{} популярных фильмов", count);
         return filmStorage.findPopular(count);
+    }
+
+    public Collection<Film> findPopularByGenreAndYear(int count, Long genreId, Integer year) {
+        return filmStorage.findPopularByGenreAndYear(count, genreId, year);
+    }
+
+    public Collection<Film> findPopularByGenre(int count, Long genreId) {
+        return filmStorage.findPopularByGenre(count, genreId);
+    }
+
+    public Collection<Film> findPopularByYear(int count, Integer year) {
+        return filmStorage.findPopularByYear(count, year);
+    }
+
+    public void delete(Long filmId) {
+        filmStorage.delete(filmId);
+    }
+
+    public Collection<Film> search(String query, List<String> by) {
+        return filmStorage.search(query, by);
     }
 
     public Collection<Film> findCommon(Long userId, Long friendId) {

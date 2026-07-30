@@ -41,6 +41,10 @@ public class Film {
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Set<Genre> genres = new HashSet<>();
 
+    @Builder.Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Set<Director> directors = new HashSet<>();
+
     private Mpa mpa;
 
     @AssertTrue(message = "Дата релиза — не раньше 28 декабря 1895 года")
