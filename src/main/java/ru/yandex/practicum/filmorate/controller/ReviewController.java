@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.OperationType;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import java.util.Collection;
@@ -24,20 +27,26 @@ import java.util.Collection;
 @RequestMapping("/reviews")
 public class ReviewController {
     private final ReviewService reviewService;
+    private final EventsService eventsService;
 
     @PostMapping
     public Review create(@Valid @RequestBody Review review) {
-        return reviewService.create(review);
+        Review result = reviewService.create(review);
+        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getFilmId(), OperationType.ADD);
+        return result;
     }
 
     @PutMapping
     public Review update(@Valid @RequestBody Review review) {
-        return reviewService.update(review);
+        Review result = reviewService.update(review);
+        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getFilmId(), OperationType.UPDATE);
+        return result;
     }
 
     @DeleteMapping("/{id}")
     public void deleteReviewById(@PathVariable("id") Long reviewId) {
-        reviewService.deleteReviewById(reviewId);
+        Review review = reviewService.deleteReviewById(reviewId);
+        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getFilmId(), OperationType.REMOVE);
     }
 
     @GetMapping("/{id}")
@@ -57,11 +66,13 @@ public class ReviewController {
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable("id") Long reviewId, @PathVariable("userId") Long userId) {
         reviewService.addLike(reviewId, userId);
+     //   eventsService.addNewEvent(userId, EventType.LIKE, reviewId, OperationType.ADD);
     }
 
     @PutMapping("/{id}/dislike/{userId}")
     public void addDislike(@PathVariable("id") Long reviewId, @PathVariable("userId") Long userId) {
         reviewService.addDislike(reviewId, userId);
+        //  eventsService.addNewEvent(userId,EventType.LIKE,reviewId,OperationType.REMOVE);
     }
 
     @DeleteMapping("/{id}/like/{userId}")

@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.ReviewLikeStorage;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
@@ -79,10 +77,11 @@ public class ReviewService {
         });
     }
 
-    public void deleteReviewById(Long reviewId) {
-        get(reviewId);
+    public Review deleteReviewById(Long reviewId) {
+        Review review = get(reviewId);
         reviewStorage.deleteReviewById(reviewId);
         log.info("Удален отзыв с id = {}", reviewId);
+        return review;
     }
 
     public void addLike(Long reviewId, Long userId) {
