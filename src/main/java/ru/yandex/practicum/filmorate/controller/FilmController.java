@@ -59,21 +59,13 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public void likeFilm(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
         filmService.addLike(filmId, userId);
-        eventsService.addNewEvent(userId, EventType.LIKE,filmId, OperationType.ADD);
+        eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.ADD);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
         filmService.deleteLike(filmId, userId);
-        eventsService.addNewEvent(userId,EventType.LIKE,filmId,OperationType.REMOVE);
-    }
-
-    @GetMapping("/popular")
-    public Collection<Film> findPopular(
-            @RequestParam(defaultValue = DEFAULT_COUNT_POPULAR_FILMS, required = false)
-            @Positive(message = "Параметр count должен быть больше нуля")
-            Integer count) {
-        return filmService.findPopular(count);
+        eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.REMOVE);
     }
 
     @DeleteMapping("/{id}")
@@ -88,4 +80,23 @@ public class FilmController {
         return filmService.search(query, by);
     }
 
+    @GetMapping("/popular")
+    public Collection<Film> findPopularByGenreAndYear(
+            @RequestParam(defaultValue = DEFAULT_COUNT_POPULAR_FILMS)
+            @Positive(message = "Параметр count должен быть больше нуля")
+            int count,
+            @RequestParam(required = false) Long genreId,
+            @RequestParam(required = false) Integer year) {
+        if (genreId == null && year == null) {
+            return filmService.findPopular(count);
+        }
+        if (year == null) {
+            return filmService.findPopularByGenre(count, genreId);
+        }
+        if (genreId == null) {
+            return filmService.findPopularByYear(count, year);
+        }
+        return filmService.findPopularByGenreAndYear(count, genreId, year);
+
+    }
 }
