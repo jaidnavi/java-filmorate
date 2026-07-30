@@ -142,6 +142,8 @@ public class UserService {
         });
 
         return filmStorage.findRecommendations(userId);
+    }
+
     public void delete(Long userId) {
         userStorage.delete(userId);
     }
