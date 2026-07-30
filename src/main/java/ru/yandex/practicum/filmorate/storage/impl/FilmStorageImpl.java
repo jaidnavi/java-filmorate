@@ -331,7 +331,7 @@ public class FilmStorageImpl implements FilmStorage {
         }
 
         String sqlOrder = """
-                    ORDER BY f.film_id
+                    ORDER BY f.film_id DESC
                     """;
 
         String sql = sqlSelectMain + sqlSelectAdd + sqlWhere + sqlOrder;
