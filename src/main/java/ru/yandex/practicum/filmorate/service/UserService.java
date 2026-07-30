@@ -90,7 +90,7 @@ public class UserService {
                 new NoDataFoundException("Пользователь не найден после удаления друга"));
     }
 
-    public Set<User> findFriends(Long userId) {
+    public List<User> findFriends(Long userId) {
 
         User user = userStorage.get(userId).orElseThrow(() -> {
             log.error("При поиске друзей, не найден пользователь с id {}", userId);
@@ -98,13 +98,13 @@ public class UserService {
         });
 
         if (user.getFriends() == null) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
 
         return user.getFriends().stream()
                 .map(userStorage::get)
                 .flatMap(Optional::stream)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     public Set<User> findCommonFriends(Long userId, Long otherId) {
@@ -142,6 +142,8 @@ public class UserService {
         });
 
         return filmStorage.findRecommendations(userId);
+    public void delete(Long userId) {
+        userStorage.delete(userId);
     }
 
 }

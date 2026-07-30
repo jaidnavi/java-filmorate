@@ -96,16 +96,29 @@ public class UserStorageImpl implements UserStorage {
         if (!users.isEmpty()) {
             User user = users.get(0);
 
-            String sqlFriends = "SELECT friend_id FROM user_friends WHERE user_id = ? AND friend_id IS NOT NULL";
+            String sqlFriends = "SELECT friend_id FROM user_friends WHERE user_id = ? AND friend_id IS NOT NULL ORDER BY friend_id ASC";
             List<Long> friendIds = jdbcTemplate.queryForList(sqlFriends, Long.class, userId);
 
-            user.setFriends(new HashSet<>(friendIds));
+            user.setFriends(new LinkedHashSet<>(friendIds));
 
             return Optional.of(user);
         }
 
 
         return users.stream().findFirst();
+    }
+
+    @Override
+    public void delete(Long userId) {
+        String sql = """
+                DELETE FROM users
+                WHERE user_id = ?
+                """;
+
+        jdbcTemplate.update(
+                sql,
+                userId
+        );
     }
 
 

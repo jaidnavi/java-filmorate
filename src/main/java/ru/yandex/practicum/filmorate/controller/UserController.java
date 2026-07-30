@@ -55,7 +55,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Set<User> findFriends(@PathVariable("id") long userId) {
+    public Collection<User> findFriends(@PathVariable("id") long userId) {
         return userService.findFriends(userId);
     }
 
@@ -67,6 +67,9 @@ public class UserController {
     @GetMapping("/{id}/recommendations")
     public Collection<Film> findCommonFriends(@PathVariable("id") long userId) {
         return userService.findRecommendations(userId);
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id") long userId) {
+        userService.delete(userId);
     }
 
 }

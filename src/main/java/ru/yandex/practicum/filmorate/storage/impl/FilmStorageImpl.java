@@ -9,9 +9,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.*;
 
 import java.sql.Date;
@@ -30,17 +28,21 @@ public class FilmStorageImpl implements FilmStorage {
     private final FilmLikeStorage filmLikeStorage;
     private final MpaStorage mpaStorage;
     private final GenreStorage genreStorage;
+    private final DirectorStorage directorStorage;
+    private final FilmDirectorStorage filmDirectorStorage;
     private static final FilmMapper FILM_MAPPER = new FilmMapper();
 
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
     @Autowired
-    public FilmStorageImpl(JdbcTemplate jdbcTemplate, GenreRefStorage genreRefStorage, FilmLikeStorage filmLikeStorage, MpaStorage mpaStorage, GenreStorage genreStorage) {
+    public FilmStorageImpl(JdbcTemplate jdbcTemplate, GenreRefStorage genreRefStorage, FilmLikeStorage filmLikeStorage, MpaStorage mpaStorage, GenreStorage genreStorage, DirectorStorage directorStorage, FilmDirectorStorage filmDirectorStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreRefStorage = genreRefStorage;
         this.filmLikeStorage = filmLikeStorage;
         this.mpaStorage = mpaStorage;
         this.genreStorage = genreStorage;
+        this.directorStorage = directorStorage;
+        this.filmDirectorStorage = filmDirectorStorage;
     }
 
     @Override
@@ -94,6 +96,28 @@ public class FilmStorageImpl implements FilmStorage {
             log.warn("У создаваемого фильма id = {} нет жанров в запросе!", generatedId);
         }
 
+
+        if (film.getDirectors() != null && !film.getDirectors().isEmpty()) {
+            log.info("Попытка сохранить режисеров для фильма id = {}. Количество: {}", generatedId, film.getDirectors().size());
+
+            List<Long> directorIds = film.getDirectors().stream()
+                    .map(Director::getId)
+                    .distinct()
+                    .toList();
+
+            for (Long directorId : directorIds) {
+                directorStorage.get(directorId);
+            }
+
+            for (Long directorId : directorIds) {
+                filmDirectorStorage.addDirector(generatedId, directorId);
+            }
+            log.info("Режисеры успешно записаны в таблицу film_directors");
+
+        } else {
+            log.warn("У создаваемого фильма id = {} нет режиссеров в запросе!", generatedId);
+        }
+
         return get(generatedId).orElseThrow(() ->
                 new NoDataFoundException("Ошибка при создании фильма с id = " + generatedId));
     }
@@ -112,6 +136,9 @@ public class FilmStorageImpl implements FilmStorage {
             throw new NoDataFoundException("Не найден фильм для обновления с id = " + film.getId());
         }
 
+        genreRefStorage.replaceByFilmId(film.getId(), film.getGenres());
+        filmDirectorStorage.replaceByFilmId(film.getId(), film.getDirectors());
+
         return get(film.getId()).orElseThrow(() ->
                 new NoDataFoundException("Не найден фильм с id = " + film.getId()));
     }
@@ -127,12 +154,53 @@ public class FilmStorageImpl implements FilmStorage {
 
         List<Film> films = jdbcTemplate.query(sql, FILM_MAPPER);
 
+        for (Film film : films) {
+            film.setGenres(genreRefStorage.findByFilmId(film.getId()));
+            film.setLikeUsers(filmLikeStorage.findUserByFilmId(film.getId()));
+
+            film.setDirectors(filmDirectorStorage.findByFilmId(film.getId()));
+
+        }
+
+        return films;
+    }
+
+    @Override
+    public Collection<Film> getByDirector(Long directorId, String sortBy) {
+
+        String sqlOrder = "";
+        if (SortType.YEAR.getDescription().equalsIgnoreCase(sortBy)) {
+            sqlOrder = """
+                    ORDER BY f.release_date ASC
+                    """;
+        } else if (SortType.LIKES.getDescription().equalsIgnoreCase(sortBy)) {
+            sqlOrder = """
+                    ORDER BY like_count DESC
+                    """;
+        }
+
+        String sql = """
+                SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
+                       f.mpa_id, m.name AS mpa_name,
+                       COUNT(fl.user_id) AS like_count
+                FROM films f
+                INNER JOIN  film_directors d ON d.film_id = f.film_id
+                LEFT JOIN mpa m ON f.mpa_id = m.mpa_id
+                LEFT JOIN film_likes fl ON f.film_id = fl.film_id
+                WHERE d.director_id = ?
+                GROUP BY f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, m.name
+                """ + sqlOrder;
+
+        List<Film> films = jdbcTemplate.query(sql, FILM_MAPPER, directorId);
+
 
         for (Film film : films) {
 
             film.setGenres(genreRefStorage.findByFilmId(film.getId()));
 
             film.setLikeUsers(filmLikeStorage.findUserByFilmId(film.getId()));
+
+            film.setDirectors(filmDirectorStorage.findByFilmId(film.getId()));
 
         }
 
@@ -157,6 +225,8 @@ public class FilmStorageImpl implements FilmStorage {
             film.setGenres(genreRefStorage.findByFilmId(filmId));
 
             film.setLikeUsers(filmLikeStorage.findUserByFilmId(filmId));
+
+            film.setDirectors(filmDirectorStorage.findByFilmId(filmId));
 
             return Optional.of(film);
         }
@@ -221,6 +291,70 @@ public class FilmStorageImpl implements FilmStorage {
 
     }
 
+    @Override
+    public Collection<Film> search(String query, List<String> by) {
+        String lowerQuery = query.toLowerCase();
+
+        Set<SearchByType> searchTypes = by.stream()
+                .map(String::toUpperCase)
+                .map(SearchByType::valueOf)
+                .collect(Collectors.toSet());
+
+        String sqlSelectMain = """
+                SELECT f.film_id
+                FROM films f
+                """;
+
+        String sqlSelectAdd = "";
+        String sqlWhere;
+        Object[] params;
+
+        if (searchTypes.contains(SearchByType.DIRECTOR) && searchTypes.contains(SearchByType.TITLE)) {
+            sqlSelectAdd = """
+                    LEFT JOIN film_directors fd ON fd.film_id = f.film_id
+                    LEFT JOIN directors d ON d.director_id = fd.director_id
+                    """;
+            sqlWhere = " WHERE (LOWER(d.name) LIKE ? OR LOWER(f.name) LIKE ?) ";
+            params = new Object[]{"%" + lowerQuery + "%", "%" + lowerQuery + "%"};
+        } else if (searchTypes.contains(SearchByType.DIRECTOR)) {
+            sqlSelectAdd = """
+                    LEFT JOIN film_directors fd ON fd.film_id = f.film_id
+                    LEFT JOIN directors d ON d.director_id = fd.director_id
+                    """;
+            sqlWhere = " WHERE LOWER(d.name) LIKE ? ";
+            params = new Object[]{"%" + lowerQuery + "%"};
+        } else if (searchTypes.contains(SearchByType.TITLE)) {
+            sqlWhere = " WHERE LOWER(f.name) LIKE ? ";
+            params = new Object[]{"%" + lowerQuery + "%"};
+        } else {
+            throw new ValidationException("Поиск по полю " + by + " не реализован");
+        }
+
+        String sqlOrder = """
+                    ORDER BY f.film_id
+                    """;
+
+        String sql = sqlSelectMain + sqlSelectAdd + sqlWhere + sqlOrder;
+        List<Long> searchFilmIds = jdbcTemplate.queryForList(sql, Long.class, params);
+
+        return searchFilmIds.stream()
+                .map(filmId -> get(filmId).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void delete(Long filmId) {
+        String sql = """
+                DELETE FROM films
+                WHERE film_id = ?
+                """;
+
+        jdbcTemplate.update(
+                sql,
+                filmId
+        );
+    }
 
     private static class FilmMapper implements RowMapper<Film> {
         @Override
@@ -243,4 +377,5 @@ public class FilmStorageImpl implements FilmStorage {
             return film;
         }
     }
+
 }
