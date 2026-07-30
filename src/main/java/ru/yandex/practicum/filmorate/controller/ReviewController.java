@@ -39,7 +39,7 @@ public class ReviewController {
     @PutMapping
     public Review update(@Valid @RequestBody Review review) {
         Review result = reviewService.update(review);
-        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getFilmId(), OperationType.UPDATE);
+        eventsService.addNewEvent(result.getUserId(), EventType.REVIEW, result.getFilmId(), OperationType.UPDATE);
         return result;
     }
 

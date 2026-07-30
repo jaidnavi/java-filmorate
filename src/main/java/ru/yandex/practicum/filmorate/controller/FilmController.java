@@ -59,13 +59,13 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public void likeFilm(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
         filmService.addLike(filmId, userId);
-        eventsService.addNewEvent(userId, EventType.LIKE,filmId, OperationType.ADD);
+        eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.ADD);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
         filmService.deleteLike(filmId, userId);
-        eventsService.addNewEvent(userId,EventType.LIKE,filmId,OperationType.REMOVE);
+        eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.REMOVE);
     }
 
     @GetMapping("/popular")
