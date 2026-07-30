@@ -17,13 +17,11 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import java.util.Collection;
 import java.util.Set;
 
-
 @Slf4j
 @RestController
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-
     private final UserService userService;
     private final EventsService eventsService;
 
@@ -51,7 +49,7 @@ public class UserController {
     @PutMapping("/{id}/friends/{friendId}")
     public User addFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
         User user = userService.addFriend(userId, friendId);
-        eventsService.addNewEvent(userId,EventType.FRIEND,friendId, OperationType.ADD);
+        eventsService.addNewEvent(userId, EventType.FRIEND, friendId, OperationType.ADD);
         return user;
     }
 
@@ -59,7 +57,7 @@ public class UserController {
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
         userService.deleteFriend(userId, friendId);
-        eventsService.addNewEvent(userId, EventType.FRIEND,friendId,OperationType.REMOVE);
+        eventsService.addNewEvent(userId, EventType.FRIEND, friendId, OperationType.REMOVE);
     }
 
     @GetMapping("/{id}/friends")
@@ -92,6 +90,7 @@ public class UserController {
     public Collection<Events> getAllFeed() {
         return eventsService.getAllFeed();
     }
+
     @GetMapping("/{id}/recommendations")
     public Collection<Film> findCommonFriends(@PathVariable("id") long userId) {
         return userService.findRecommendations(userId);
