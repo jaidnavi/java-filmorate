@@ -28,20 +28,18 @@ public class FilmStorageImpl implements FilmStorage {
     private final FilmLikeStorage filmLikeStorage;
     private final MpaStorage mpaStorage;
     private final GenreStorage genreStorage;
-    private final DirectorStorage directorStorage;
     private final FilmDirectorStorage filmDirectorStorage;
     private static final FilmMapper FILM_MAPPER = new FilmMapper();
 
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
     @Autowired
-    public FilmStorageImpl(JdbcTemplate jdbcTemplate, GenreRefStorage genreRefStorage, FilmLikeStorage filmLikeStorage, MpaStorage mpaStorage, GenreStorage genreStorage, DirectorStorage directorStorage, FilmDirectorStorage filmDirectorStorage) {
+    public FilmStorageImpl(JdbcTemplate jdbcTemplate, GenreRefStorage genreRefStorage, FilmLikeStorage filmLikeStorage, MpaStorage mpaStorage, GenreStorage genreStorage, FilmDirectorStorage filmDirectorStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreRefStorage = genreRefStorage;
         this.filmLikeStorage = filmLikeStorage;
         this.mpaStorage = mpaStorage;
         this.genreStorage = genreStorage;
-        this.directorStorage = directorStorage;
         this.filmDirectorStorage = filmDirectorStorage;
     }
 
@@ -77,43 +75,20 @@ public class FilmStorageImpl implements FilmStorage {
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             log.info("Попытка сохранить жанры для фильма id = {}. Количество: {}", generatedId, film.getGenres().size());
-
-            List<Long> genreIds = film.getGenres().stream()
-                    .map(Genre::getId)
-                    .distinct()
-                    .toList();
-
-            for (Long genreId : genreIds) {
-                genreStorage.findById(genreId);
-            }
-
-            for (Long genreId : genreIds) {
-                genreRefStorage.addGenre(generatedId, genreId);
-            }
+            Set<Genre> genres = film.getGenres().stream()
+                    .map(genre -> genreStorage.findById(genre.getId()))
+                    .collect(Collectors.toSet());
+            genreRefStorage.addGenresToFilm(genres,generatedId);
             log.info("Жанры успешно записаны в таблицу genre_ref");
 
         } else {
             log.warn("У создаваемого фильма id = {} нет жанров в запросе!", generatedId);
         }
 
-
         if (film.getDirectors() != null && !film.getDirectors().isEmpty()) {
-            log.info("Попытка сохранить режисеров для фильма id = {}. Количество: {}", generatedId, film.getDirectors().size());
-
-            List<Long> directorIds = film.getDirectors().stream()
-                    .map(Director::getId)
-                    .distinct()
-                    .toList();
-
-            for (Long directorId : directorIds) {
-                directorStorage.get(directorId);
-            }
-
-            for (Long directorId : directorIds) {
-                filmDirectorStorage.addDirector(generatedId, directorId);
-            }
-            log.info("Режисеры успешно записаны в таблицу film_directors");
-
+            log.info("Попытка сохранить режиссеров для фильма id = {}. Количество: {}", generatedId, film.getDirectors().size());
+            filmDirectorStorage.addDirectorsToFilm(film.getDirectors(),generatedId);
+            log.info("Режиссеры успешно записаны в таблицу film_directors");
         } else {
             log.warn("У создаваемого фильма id = {} нет режиссеров в запросе!", generatedId);
         }

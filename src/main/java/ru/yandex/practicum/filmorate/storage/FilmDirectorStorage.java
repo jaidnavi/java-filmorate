@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Director;
-
 import java.util.Set;
 
 public interface FilmDirectorStorage {
@@ -12,5 +11,5 @@ public interface FilmDirectorStorage {
 
     void deleteByFilmId(Long filmId);
 
-    void addDirector(Long filmId, Long directorId);
+    void addDirectorsToFilm(Set<Director> directors, Long filmId);
 }
