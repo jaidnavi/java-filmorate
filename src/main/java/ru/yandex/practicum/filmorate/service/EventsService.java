@@ -44,7 +44,7 @@ public class EventsService {
         if (operation == null) {
             throw new ValidationException("Не указан код операции для события");
         }
-        eventsStorage.addNewEvent(userId,eventType,entityId,operation);
+        eventsStorage.addNewEvent(userId, eventType, entityId, operation);
     }
 
     public Collection<Events> getFeedByUserId(Long userId) {
@@ -57,6 +57,6 @@ public class EventsService {
     }
 
     public Collection<Events> getAllFeed() {
-            return eventsStorage.getAllFeed();
+        return eventsStorage.getAllFeed();
     }
 }

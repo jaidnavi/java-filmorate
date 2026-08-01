@@ -11,21 +11,27 @@ import java.util.Collection;
  */
 public interface EventsStorage {
 
-    /** Метод создания нового события в ленте
-     * @param userId идентификатор пользователя у которого произошло событие
+    /**
+     * Метод создания нового события в ленте
+     *
+     * @param userId    идентификатор пользователя у которого произошло событие
      * @param eventType тип события
-     * @param entityId идентификатор сущности с которой связано событие
+     * @param entityId  идентификатор сущности с которой связано событие
      * @param operation операция события
      */
     void addNewEvent(Long userId, EventType eventType, Long entityId, OperationType operation);
 
-    /** Метод возвращает ленту событий пользователя.
+    /**
+     * Метод возвращает ленту событий пользователя.
+     *
      * @param userId идентификатор пользователя у которого нужно вернуть ленту
      * @return список событий
      */
     Collection<Events> getFeedByUserId(Long userId);
 
-    /** Метод возвращает всю ленту событий.
+    /**
+     * Метод возвращает всю ленту событий.
+     *
      * @return список событий
      */
     Collection<Events> getAllFeed();

@@ -11,7 +11,10 @@ import ru.yandex.practicum.filmorate.storage.FilmLikeStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -134,7 +137,7 @@ public class FilmService {
             return new NoDataFoundException("При поиске общих фильмов, не найден друг с id " + friendId);
         });
         log.info("Запрос на получение общих фильмов между пользователем с userId={} и его другом c friendId={}", userId, friendId);
-        return filmStorage.findCommon(userId,friendId);
+        return filmStorage.findCommon(userId, friendId);
     }
 
 }
