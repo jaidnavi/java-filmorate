@@ -108,8 +108,9 @@ public class FilmStorageImpl implements FilmStorage {
         }
 
         String sql = "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? WHERE film_id = ?";
+
         int rowsUpdated = jdbcTemplate.update(sql,
-                film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
+                film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), (film.getMpa() != null) ? film.getMpa().getId() : null, film.getId());
 
         if (rowsUpdated == 0) {
             throw new NoDataFoundException("Не найден фильм для обновления с id = " + film.getId());

@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.storage.FilmLikeStorage;
 
-import java.util.HashSet;
-import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
