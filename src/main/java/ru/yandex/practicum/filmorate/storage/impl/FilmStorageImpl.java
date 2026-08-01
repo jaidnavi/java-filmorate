@@ -491,7 +491,7 @@ public class FilmStorageImpl implements FilmStorage {
                 FROM film_directors fd
                 JOIN directors d ON d.director_id = fd.director_id
                 WHERE fd.film_id IN (:filmIds)
-                ORDER BY d.director_id
+                ORDER BY d.director_id DESC
                 """;
         MapSqlParameterSource parameters = new MapSqlParameterSource("filmIds", filmIds);
 

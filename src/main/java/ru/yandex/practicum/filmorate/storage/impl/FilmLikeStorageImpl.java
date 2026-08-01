@@ -48,21 +48,5 @@ public class FilmLikeStorageImpl implements FilmLikeStorage {
         }
     }
 
-    @Override
-    public Set<Long> findUserByFilmId(Long filmId) {
-        String sql = """
-                SELECT user_id
-                FROM film_likes
-                WHERE film_id = ?
-                """;
-
-        return jdbcTemplate.query(sql, rs -> {
-            Set<Long> userIds = new HashSet<>();
-            while (rs.next()) {
-                userIds.add(rs.getLong("user_id"));
-            }
-            return userIds;
-        }, filmId);
-    }
 
 }

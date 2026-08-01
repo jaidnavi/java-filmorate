@@ -31,20 +31,6 @@ public class GenreRefStorageImpl implements GenreRefStorage {
     }
 
     @Override
-    public Set<Genre> findByFilmId(Long filmId) {
-        String sql = """
-                SELECT  f.genre_id AS genre_id,
-                        g.genre
-                FROM genre_ref AS f
-                JOIN genre AS g ON f.genre_id = g.genre_id
-                WHERE f.film_id = ?
-                ORDER BY g.genre_id
-                """;
-
-        return new LinkedHashSet<>(jdbcTemplate.query(sql, this::mapRowToGenre, filmId));
-    }
-
-    @Override
     public void deleteByFilmId(Long filmId) {
         String sql = """
                 DELETE FROM genre_ref

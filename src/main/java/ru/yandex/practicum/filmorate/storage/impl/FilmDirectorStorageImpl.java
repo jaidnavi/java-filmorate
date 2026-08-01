@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.storage.FilmDirectorStorage;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,21 +29,6 @@ public class FilmDirectorStorageImpl implements FilmDirectorStorage {
                 addDirectorsToFilm(directors,filmId);
             }
         }
-    }
-
-    @Override
-    public Set<Director> findByFilmId(Long filmId) {
-        String sql = """
-                SELECT  f.director_id AS id,
-                        g.name
-                FROM film_directors AS f
-                JOIN directors AS g ON f.director_id = g.director_id
-                WHERE f.film_id = ?
-                ORDER BY g.director_id
-                """;
-
-        List<Director> directors = jdbcTemplate.query(sql, DIRECTOR_MAPPER, filmId);
-        return new LinkedHashSet<>(directors);
     }
 
     @Override

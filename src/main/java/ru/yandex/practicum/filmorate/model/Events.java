@@ -50,5 +50,5 @@ public class Events {
     /**
      * Идентификатор сущности, с которой произошло событие
      */
-   private Long entityId;
+    private Long entityId;
 }

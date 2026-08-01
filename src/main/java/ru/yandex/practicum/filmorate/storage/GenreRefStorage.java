@@ -7,8 +7,6 @@ import java.util.Set;
 public interface GenreRefStorage {
     void replaceByFilmId(Long filmId, Set<Genre> genres);
 
-    Set<Genre> findByFilmId(Long filmId);
-
     void deleteByFilmId(Long filmId);
 
     void addGenresToFilm(Set<Genre> genres, Long filmId);

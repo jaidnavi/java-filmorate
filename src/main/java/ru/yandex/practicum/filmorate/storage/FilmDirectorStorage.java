@@ -7,8 +7,6 @@ public interface FilmDirectorStorage {
 
     void replaceByFilmId(Long filmId, Set<Director> directors);
 
-    Set<Director> findByFilmId(Long filmId);
-
     void deleteByFilmId(Long filmId);
 
     void addDirectorsToFilm(Set<Director> directors, Long filmId);
