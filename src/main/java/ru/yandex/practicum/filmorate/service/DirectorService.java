@@ -1,43 +1,20 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.storage.DirectorStorage;
-
 
 import java.util.Collection;
 import java.util.Optional;
 
-@Slf4j
-@Service
-public class DirectorService {
-    public final DirectorStorage directorStorage;
+public interface DirectorService {
 
-    @Autowired
-    public DirectorService(DirectorStorage directorStorage) {
-        this.directorStorage = directorStorage;
-    }
+    Collection<Director> findAll();
 
-    public Collection<Director> findAll() {
-        return directorStorage.findAll();
-    }
+    Optional<Director> get(Long directorId);
 
-    public Optional<Director> get(Long directorId) {
-        return directorStorage.get(directorId);
-    }
+    Director create(Director director);
 
-    public Director create(Director director) {
-        return directorStorage.create(director);
-    }
+    Director update(Director newDirector);
 
-    public Director update(Director newDirector) {
-        return directorStorage.update(newDirector);
-    }
-
-    public void delete(Long directorId) {
-        directorStorage.delete(directorId);
-    }
+    void delete(Long directorId);
 
 }
