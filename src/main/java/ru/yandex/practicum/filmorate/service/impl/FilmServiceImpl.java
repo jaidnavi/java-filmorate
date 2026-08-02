@@ -3,8 +3,10 @@ package ru.yandex.practicum.filmorate.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.OperationType;
@@ -29,42 +31,46 @@ public class FilmServiceImpl implements FilmService {
     private final FilmLikeStorage filmLikeStorage;
     private final DirectorStorage directorStorage;
     private final EventsService eventsService;
+    private final FilmMapper filmMapper;
 
     @Autowired
-    public FilmServiceImpl(FilmStorage filmStorage, UserStorage userStorage, FilmLikeStorage filmLikeStorage, DirectorStorage directorStorage, EventsService eventsService) {
+    public FilmServiceImpl(FilmStorage filmStorage, UserStorage userStorage, FilmLikeStorage filmLikeStorage, DirectorStorage directorStorage, EventsService eventsService, FilmMapper filmMapper) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.filmLikeStorage = filmLikeStorage;
         this.directorStorage = directorStorage;
         this.eventsService = eventsService;
+        this.filmMapper = filmMapper;
     }
 
     @Override
-    public Collection<Film> findAll() {
-        return filmStorage.findAll();
+    public Collection<FilmDTO> findAll() {
+        return filmMapper.toFilmDTOCollection(filmStorage.findAll());
     }
 
     @Override
-    public Collection<Film> getByDirector(Long directorId, String sortBy) {
+    public Collection<FilmDTO> getByDirector(Long directorId, String sortBy) {
         directorStorage.get(directorId)
                 .orElseThrow(() -> new NoDataFoundException("Режиссер с id " + directorId + " не найден"));
 
-        return filmStorage.getByDirector(directorId, sortBy);
+        return filmMapper.toFilmDTOCollection(filmStorage.getByDirector(directorId, sortBy).stream().toList());
     }
 
     @Override
-    public Film create(Film film) {
-        return filmStorage.create(film);
+    public FilmDTO create(FilmDTO filmDTO) {
+        Film film = filmMapper.toFilm(filmDTO);
+        return filmMapper.toFilmDTO(filmStorage.create(film));
     }
 
     @Override
-    public Film update(Film newFilm) {
-        return filmStorage.update(newFilm);
+    public FilmDTO update(FilmDTO newFilm) {
+        Film film = filmMapper.toFilm(newFilm);
+        return filmMapper.toFilmDTO(filmStorage.update(film));
     }
 
     @Override
-    public Optional<Film> get(Long filmId) {
-        return filmStorage.get(filmId);
+    public Optional<FilmDTO> get(Long filmId) {
+        return filmMapper.toOptionalFilmDTO(filmStorage.get(filmId));
     }
 
     @Override
@@ -116,24 +122,24 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Collection<Film> findPopular(int count) {
+    public Collection<FilmDTO> findPopular(int count) {
         log.info("Запрос на получение топ-{} популярных фильмов", count);
-        return filmStorage.findPopular(count);
+        return filmMapper.toFilmDTOCollection(filmStorage.findPopular(count));
     }
 
     @Override
-    public Collection<Film> findPopularByGenreAndYear(int count, Long genreId, Integer year) {
-        return filmStorage.findPopularByGenreAndYear(count, genreId, year);
+    public Collection<FilmDTO> findPopularByGenreAndYear(int count, Long genreId, Integer year) {
+        return filmMapper.toFilmDTOCollection(filmStorage.findPopularByGenreAndYear(count, genreId, year));
     }
 
     @Override
-    public Collection<Film> findPopularByGenre(int count, Long genreId) {
-        return filmStorage.findPopularByGenre(count, genreId);
+    public Collection<FilmDTO> findPopularByGenre(int count, Long genreId) {
+        return filmMapper.toFilmDTOCollection(filmStorage.findPopularByGenre(count, genreId));
     }
 
     @Override
-    public Collection<Film> findPopularByYear(int count, Integer year) {
-        return filmStorage.findPopularByYear(count, year);
+    public Collection<FilmDTO> findPopularByYear(int count, Integer year) {
+        return filmMapper.toFilmDTOCollection(filmStorage.findPopularByYear(count, year));
     }
 
     @Override
@@ -142,12 +148,12 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Collection<Film> search(String query, List<String> by) {
-        return filmStorage.search(query, by);
+    public Collection<FilmDTO> search(String query, List<String> by) {
+        return filmMapper.toFilmDTOCollection(filmStorage.search(query, by));
     }
 
     @Override
-    public Collection<Film> findCommon(Long userId, Long friendId) {
+    public Collection<FilmDTO> findCommon(Long userId, Long friendId) {
         if (Objects.equals(userId, friendId)) {
             throw new ValidationException("Идентификатор пользователя и друга совпадают. Это недопустимо");
         }
@@ -160,7 +166,7 @@ public class FilmServiceImpl implements FilmService {
             return new NoDataFoundException("При поиске общих фильмов, не найден друг с id " + friendId);
         });
         log.info("Запрос на получение общих фильмов между пользователем с userId={} и его другом c friendId={}", userId, friendId);
-        return filmStorage.findCommon(userId, friendId);
+        return filmMapper.toFilmDTOCollection(filmStorage.findCommon(userId, friendId));
     }
 
 }

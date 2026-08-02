@@ -7,11 +7,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
-import ru.yandex.practicum.filmorate.model.EventType;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.OperationType;
-import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
@@ -29,30 +26,30 @@ public class FilmController {
     private final FilmService filmService;
 
     @GetMapping
-    public Collection<Film> findAll() {
+    public Collection<FilmDTO> findAll() {
         return filmService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Film find(@PathVariable("id") long filmId) {
+    public FilmDTO find(@PathVariable("id") long filmId) {
         return filmService.get(filmId)
                 .orElseThrow(() -> new NoDataFoundException("Фильм с id " + filmId + " не найден"));
     }
 
     @GetMapping("/director/{id}")
-    public Collection<Film> findByDirector(@PathVariable("id") long directorId,
+    public Collection<FilmDTO> findByDirector(@PathVariable("id") long directorId,
                                            @RequestParam String sortBy) {
         return filmService.getByDirector(directorId, sortBy);
     }
 
     @PostMapping
-    public Film create(@Valid @RequestBody Film film) {
+    public FilmDTO create(@Valid @RequestBody FilmDTO film) {
         return filmService.create(film);
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) {
-        return filmService.update(film);
+    public FilmDTO update(@Valid @RequestBody FilmDTO filmDTO) {
+        return filmService.update(filmDTO);
     }
 
     @PutMapping("/{id}/like/{userId}")
@@ -71,14 +68,14 @@ public class FilmController {
     }
 
     @GetMapping("/search")
-    public Collection<Film> search(
+    public Collection<FilmDTO> search(
             @RequestParam @NotBlank(message = "Текст для поиска не может быть пустым") String query,
             @RequestParam @NotEmpty(message = "Должно быть указано поле для поиска") List<String> by) {
         return filmService.search(query, by);
     }
 
     @GetMapping("/popular")
-    public Collection<Film> findPopularByGenreAndYear(
+    public Collection<FilmDTO> findPopularByGenreAndYear(
             @RequestParam(defaultValue = DEFAULT_COUNT_POPULAR_FILMS)
             @Positive(message = "Параметр count должен быть больше нуля")
             int count,
@@ -105,7 +102,7 @@ public class FilmController {
      * @return список фильмов
      */
     @GetMapping("/common")
-    public Collection<Film> findCommon(@RequestParam long userId,
+    public Collection<FilmDTO> findCommon(@RequestParam long userId,
                                        @RequestParam long friendId) {
         return filmService.findCommon(userId, friendId);
     }

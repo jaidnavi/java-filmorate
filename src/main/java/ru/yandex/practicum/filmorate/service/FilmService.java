@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
@@ -7,31 +8,31 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FilmService {
-    Collection<Film> findAll();
+    Collection<FilmDTO> findAll();
 
-    Collection<Film> getByDirector(Long directorId, String sortBy);
+    Collection<FilmDTO> getByDirector(Long directorId, String sortBy);
 
-    Film create(Film film);
+    FilmDTO create(FilmDTO film);
 
-    Film update(Film newFilm);
+    FilmDTO update(FilmDTO newFilm);
 
-    Optional<Film> get(Long filmId);
+    Optional<FilmDTO> get(Long filmId);
 
     Film addLike(Long filmId, Long userId);
 
     Film deleteLike(Long filmId, Long userId);
 
-    Collection<Film> findPopular(int count);
+    Collection<FilmDTO> findPopular(int count);
 
-    Collection<Film> findPopularByGenreAndYear(int count, Long genreId, Integer year);
+    Collection<FilmDTO> findPopularByGenreAndYear(int count, Long genreId, Integer year);
 
-    Collection<Film> findPopularByGenre(int count, Long genreId);
+    Collection<FilmDTO> findPopularByGenre(int count, Long genreId);
 
-    Collection<Film> findPopularByYear(int count, Integer year);
+    Collection<FilmDTO> findPopularByYear(int count, Integer year);
 
     void delete(Long filmId);
 
-    Collection<Film> search(String query, List<String> by);
+    Collection<FilmDTO> search(String query, List<String> by);
 
-    Collection<Film> findCommon(Long userId, Long friendId);
+    Collection<FilmDTO> findCommon(Long userId, Long friendId);
 }

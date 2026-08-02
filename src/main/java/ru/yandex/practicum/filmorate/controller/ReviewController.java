@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.EventType;
-import ru.yandex.practicum.filmorate.model.OperationType;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import java.util.Collection;
@@ -27,18 +24,15 @@ import java.util.Collection;
 @RequestMapping("/reviews")
 public class ReviewController {
     private final ReviewService reviewService;
-    private final EventsService eventsService;
 
     @PostMapping
     public Review create(@Valid @RequestBody Review review) {
-        Review result = reviewService.create(review);
-        return result;
+        return reviewService.create(review);
     }
 
     @PutMapping
     public Review update(@Valid @RequestBody Review review) {
-        Review result = reviewService.update(review);
-        return result;
+        return reviewService.update(review);
     }
 
     @DeleteMapping("/{id}")
