@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.ReviewLikeStorage;
@@ -22,14 +23,16 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewLikeStorage reviewLikeStorage;
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final EventsService eventsService;
 
     @Autowired
     public ReviewServiceImpl(ReviewStorage reviewStorage, ReviewLikeStorage reviewLikeStorage,
-                             FilmStorage filmStorage, UserStorage userStorage) {
+                             FilmStorage filmStorage, UserStorage userStorage, EventsService eventsService) {
         this.reviewStorage = reviewStorage;
         this.reviewLikeStorage = reviewLikeStorage;
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.eventsService = eventsService;
     }
 
     @Override
@@ -37,6 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
         getUserById(review.getUserId());
         getFilmById(review.getFilmId());
         Review savedReview = reviewStorage.create(review);
+        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getReviewId(), OperationType.ADD);
         log.info("Добавлен новый отзыв с id = {}", savedReview.getReviewId());
         return savedReview;
     }
@@ -49,8 +53,8 @@ public class ReviewServiceImpl implements ReviewService {
         }
         getUserById(newReview.getUserId());
         getFilmById(newReview.getFilmId());
-
         Review review = reviewStorage.update(newReview);
+        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getReviewId(), OperationType.UPDATE);
         log.info("Обновлен отзыв с id = {}", review.getReviewId());
         return review;
     }
@@ -78,6 +82,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Review deleteReviewById(Long reviewId) {
         Review review = get(reviewId);
         reviewStorage.deleteReviewById(reviewId);
+        eventsService.addNewEvent(review.getUserId(), EventType.REVIEW, review.getReviewId(), OperationType.REMOVE);
         log.info("Удален отзыв с id = {}", reviewId);
         return review;
     }

@@ -27,7 +27,6 @@ public class FilmController {
     private static final String DEFAULT_COUNT_POPULAR_FILMS = "10";
 
     private final FilmService filmService;
-    private final EventsService eventsService;
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -59,13 +58,11 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public void likeFilm(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
         filmService.addLike(filmId, userId);
-        eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.ADD);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
         filmService.deleteLike(filmId, userId);
-        eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.REMOVE);
     }
 
     @DeleteMapping("/{id}")

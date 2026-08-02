@@ -49,7 +49,6 @@ public class UserController {
     @PutMapping("/{id}/friends/{friendId}")
     public User addFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
         User user = userService.addFriend(userId, friendId);
-        eventsService.addNewEvent(userId, EventType.FRIEND, friendId, OperationType.ADD);
         return user;
     }
 
@@ -57,7 +56,6 @@ public class UserController {
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
         userService.deleteFriend(userId, friendId);
-        eventsService.addNewEvent(userId, EventType.FRIEND, friendId, OperationType.REMOVE);
     }
 
     @GetMapping("/{id}/friends")

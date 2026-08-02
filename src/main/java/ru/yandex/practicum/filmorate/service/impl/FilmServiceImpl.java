@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.OperationType;
+import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmLikeStorage;
@@ -25,13 +28,15 @@ public class FilmServiceImpl implements FilmService {
     private final UserStorage userStorage;
     private final FilmLikeStorage filmLikeStorage;
     private final DirectorStorage directorStorage;
+    private final EventsService eventsService;
 
     @Autowired
-    public FilmServiceImpl(FilmStorage filmStorage, UserStorage userStorage, FilmLikeStorage filmLikeStorage, DirectorStorage directorStorage) {
+    public FilmServiceImpl(FilmStorage filmStorage, UserStorage userStorage, FilmLikeStorage filmLikeStorage, DirectorStorage directorStorage, EventsService eventsService) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.filmLikeStorage = filmLikeStorage;
         this.directorStorage = directorStorage;
+        this.eventsService = eventsService;
     }
 
     @Override
@@ -79,7 +84,10 @@ public class FilmServiceImpl implements FilmService {
         filmLikeStorage.add(filmId, userId);
         log.info("Фильму с id {} успешно добавлен лайк от пользователя с id {}", filmId, userId);
 
-        // 3. Возвращаем полностью обновленный и свежий объект фильма из БД для прохождения тестов
+        // 3. Фиксируем событие в ленту
+        eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.ADD);
+
+        // 4. Возвращаем полностью обновленный и свежий объект фильма из БД для прохождения тестов
         return filmStorage.get(filmId).orElseThrow();
     }
 
@@ -100,7 +108,10 @@ public class FilmServiceImpl implements FilmService {
         filmLikeStorage.delete(filmId, userId);
         log.info("У фильма с id {} успешно удален лайк от пользователя с id {}", filmId, userId);
 
-        // 3. Возвращаем свежий фильм из БД
+        // 3. Фиксируем событие в ленту
+        eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.REMOVE);
+
+        // 4. Возвращаем свежий фильм из БД
         return filmStorage.get(filmId).orElseThrow();
     }
 

@@ -10,8 +10,8 @@ import ru.yandex.practicum.filmorate.model.Events;
 import ru.yandex.practicum.filmorate.model.OperationType;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.EventsService;
-import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.EventsStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -20,18 +20,18 @@ import java.util.Optional;
 @Service
 public class EventsServiceImpl implements EventsService {
     private final EventsStorage eventsStorage;
-    private final UserService userService;
+    private final UserStorage userStorage;
 
     @Autowired
-    public EventsServiceImpl(EventsStorage eventsStorage, UserService userService) {
+    public EventsServiceImpl(EventsStorage eventsStorage, UserStorage userStorage) {
         this.eventsStorage = eventsStorage;
-        this.userService = userService;
+        this.userStorage = userStorage;
     }
 
     @Override
     public void addNewEvent(Long userId, EventType eventType, Long entityId, OperationType operation) {
         if (userId != null) {
-            Optional<User> user = userService.get(userId);
+            Optional<User> user = userStorage.get(userId);
             if (user.isEmpty()) {
                 throw new NoDataFoundException("Пользователь с id " + userId + " не найден");
             }
@@ -52,7 +52,7 @@ public class EventsServiceImpl implements EventsService {
 
     @Override
     public Collection<Events> getFeedByUserId(Long userId) {
-        Optional<User> user = userService.get(userId);
+        Optional<User> user = userStorage.get(userId);
         if (user.isPresent()) {
             return eventsStorage.getFeedByUserId(userId);
         } else {

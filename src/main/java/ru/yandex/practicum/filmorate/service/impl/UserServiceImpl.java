@@ -4,8 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.OperationType;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserFriendStorage;
@@ -20,12 +23,14 @@ public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
     private final UserFriendStorage userFriendStorage;
     private final FilmStorage filmStorage;
+    private final EventsService eventsService;
 
     @Autowired
-    public UserServiceImpl(UserStorage userStorage, UserFriendStorage userFriendStorage, FilmStorage filmStorage) {
+    public UserServiceImpl(UserStorage userStorage, UserFriendStorage userFriendStorage, FilmStorage filmStorage, EventsService eventsService) {
         this.userStorage = userStorage;
         this.userFriendStorage = userFriendStorage;
         this.filmStorage = filmStorage;
+        this.eventsService = eventsService;
     }
 
     @Override
@@ -68,6 +73,7 @@ public class UserServiceImpl implements UserService {
         } else {
             friendsSet.add(friendUserId);
             userFriendStorage.saveFriend(userId, friendsSet);
+            eventsService.addNewEvent(userId, EventType.FRIEND, friendUserId, OperationType.ADD);
             log.info("Пользователю {} успешно добавлен новый друг {}", userId, friendUserId);
         }
 
@@ -91,6 +97,7 @@ public class UserServiceImpl implements UserService {
         });
 
         userFriendStorage.deleteByUserId(userId, friendUserId);
+        eventsService.addNewEvent(userId, EventType.FRIEND, friendUserId, OperationType.REMOVE);
         log.info("Пользователю {} успешно удален друг {}", userId, friendUserId);
 
         return userStorage.get(userId).orElseThrow(() ->
