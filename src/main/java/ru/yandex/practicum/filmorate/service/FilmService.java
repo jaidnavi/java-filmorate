@@ -21,13 +21,7 @@ public interface FilmService {
 
     void deleteLike(Long filmId, Long userId);
 
-    Collection<FilmDTO> findPopular(int count);
-
-    Collection<FilmDTO> findPopularByGenreAndYear(int count, Long genreId, Integer year);
-
-    Collection<FilmDTO> findPopularByGenre(int count, Long genreId);
-
-    Collection<FilmDTO> findPopularByYear(int count, Integer year);
+    Collection<FilmDTO> findPopular(int count, Long genreId, Integer year);
 
     void delete(Long filmId);
 

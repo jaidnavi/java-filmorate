@@ -110,24 +110,21 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Collection<FilmDTO> findPopular(int count) {
-        log.info("Запрос на получение топ-{} популярных фильмов", count);
-        return filmMapper.toFilmDTOCollection(filmStorage.findPopular(count));
-    }
-
-    @Override
-    public Collection<FilmDTO> findPopularByGenreAndYear(int count, Long genreId, Integer year) {
-        return filmMapper.toFilmDTOCollection(filmStorage.findPopularByGenreAndYear(count, genreId, year));
-    }
-
-    @Override
-    public Collection<FilmDTO> findPopularByGenre(int count, Long genreId) {
-        return filmMapper.toFilmDTOCollection(filmStorage.findPopularByGenre(count, genreId));
-    }
-
-    @Override
-    public Collection<FilmDTO> findPopularByYear(int count, Integer year) {
-        return filmMapper.toFilmDTOCollection(filmStorage.findPopularByYear(count, year));
+    public Collection<FilmDTO> findPopular(int count, Long genreId, Integer year) {
+        if (count < 0) {
+            throw new ValidationException("Параметр count должен быть больше нуля");
+        }
+        Collection<Film> result;
+        if (genreId == null && year == null) {
+            result = filmStorage.findPopular(count);
+        } else if (year == null) {
+            result = filmStorage.findPopularByGenre(count, genreId);
+        } else if (genreId == null) {
+            result = filmStorage.findPopularByYear(count, year);
+        } else  {
+            result = filmStorage.findPopularByGenreAndYear(count, genreId, year);
+        }
+        return filmMapper.toFilmDTOCollection(result);
     }
 
     @Override

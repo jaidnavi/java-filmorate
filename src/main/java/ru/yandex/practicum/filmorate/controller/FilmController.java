@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -76,22 +75,10 @@ public class FilmController {
 
     @GetMapping("/popular")
     public Collection<FilmDTO> findPopularByGenreAndYear(
-            @RequestParam(defaultValue = DEFAULT_COUNT_POPULAR_FILMS)
-            @Positive(message = "Параметр count должен быть больше нуля")
-            int count,
-            @RequestParam(required = false) Long genreId,
-            @RequestParam(required = false) Integer year) {
-        if (genreId == null && year == null) {
-            return filmService.findPopular(count);
-        }
-        if (year == null) {
-            return filmService.findPopularByGenre(count, genreId);
-        }
-        if (genreId == null) {
-            return filmService.findPopularByYear(count, year);
-        }
-        return filmService.findPopularByGenreAndYear(count, genreId, year);
-
+                @RequestParam(defaultValue = DEFAULT_COUNT_POPULAR_FILMS) int count,
+                @RequestParam(required = false) Long genreId,
+                @RequestParam(required = false) Integer year) {
+        return filmService.findPopular(count, genreId, year);
     }
 
     /**
