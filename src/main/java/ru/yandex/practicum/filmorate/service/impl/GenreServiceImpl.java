@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.GenreDTO;
 import ru.yandex.practicum.filmorate.mapper.GenreMapper;
@@ -12,15 +12,10 @@ import java.util.Collection;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class GenreServiceImpl implements GenreService {
     public final GenreStorage genreStorage;
     private final GenreMapper genreMapper;
-
-    @Autowired
-    public GenreServiceImpl(GenreStorage genreStorage, GenreMapper genreMapper) {
-        this.genreStorage = genreStorage;
-        this.genreMapper = genreMapper;
-    }
 
     @Override
     public Collection<GenreDTO> findAll() {

@@ -70,7 +70,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Optional<FilmDTO> get(Long filmId) {
-        return filmMapper.toOptionalFilmDTO(filmStorage.get(filmId));
+        return filmStorage.get(filmId).map(filmMapper::toFilmDTO);
     }
 
     @Override

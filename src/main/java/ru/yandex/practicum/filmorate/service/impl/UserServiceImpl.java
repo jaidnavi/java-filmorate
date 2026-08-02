@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
     private final UserFriendStorage userFriendStorage;
@@ -30,16 +32,6 @@ public class UserServiceImpl implements UserService {
     private final EventsService eventsService;
     private final UserMapper userMapper;
     private final FilmMapper filmMapper;
-
-    @Autowired
-    public UserServiceImpl(UserStorage userStorage, UserFriendStorage userFriendStorage, FilmStorage filmStorage, EventsService eventsService, UserMapper userMapper, FilmMapper filmMapper) {
-        this.userStorage = userStorage;
-        this.userFriendStorage = userFriendStorage;
-        this.filmStorage = filmStorage;
-        this.eventsService = eventsService;
-        this.userMapper = userMapper;
-        this.filmMapper = filmMapper;
-    }
 
     @Override
     public UserDTO create(UserDTO userDTO) {
@@ -60,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserDTO> get(Long userId) {
-        return userMapper.toOptionalUserDTO(userStorage.get(userId));
+        return userStorage.get(userId).map(userMapper::toUserDTO);
     }
 
     @Override
