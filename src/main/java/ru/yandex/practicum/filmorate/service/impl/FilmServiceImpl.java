@@ -75,7 +75,6 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public void addLike(Long filmId, Long userId) {
-        // 1. Проверяем существование фильма и пользователя (иначе честная 404)
         filmStorage.get(filmId).orElseThrow(() -> {
             log.error("При добавлении лайка, не найден фильм с id {}", filmId);
             return new NoDataFoundException("При добавлении лайка, не найден фильм с id " + filmId);
@@ -86,17 +85,14 @@ public class FilmServiceImpl implements FilmService {
             return new NoDataFoundException("При добавлении лайка, не найден пользователь с id " + userId);
         });
 
-        // 2. Напрямую вызываем метод добавления лайка в БД через хранилище
         filmLikeStorage.add(filmId, userId);
         log.info("Фильму с id {} успешно добавлен лайк от пользователя с id {}", filmId, userId);
 
-        // 3. Фиксируем событие в ленту
         eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.ADD);
     }
 
     @Override
     public void deleteLike(Long filmId, Long userId) {
-        // 1. Проверяем существование фильма и пользователя
         filmStorage.get(filmId).orElseThrow(() -> {
             log.error("При удалении лайка, не найден фильм с id {}", filmId);
             return new NoDataFoundException("При удалении лайка, не найден фильм с id " + filmId);
@@ -107,11 +103,9 @@ public class FilmServiceImpl implements FilmService {
             return new NoDataFoundException("При удалении лайка, не найден пользователь с id " + userId);
         });
 
-        // 2. Напрямую вызываем удаление строки из таблицы film_likes
         filmLikeStorage.delete(filmId, userId);
         log.info("У фильма с id {} успешно удален лайк от пользователя с id {}", filmId, userId);
 
-        // 3. Фиксируем событие в ленту
         eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.REMOVE);
     }
 

@@ -64,14 +64,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO addFriend(Long userId, Long friendUserId) {
-        User user = userStorage.get(userId).orElseThrow(() -> {
+        userStorage.get(userId).orElseThrow(() -> {
             log.error("При добавлении друзей, не найден пользователь с id {}", userId);
             return new NoDataFoundException("При добавлении друзей, не найден пользователь с id " + userId);
         });
 
         userStorage.get(friendUserId).orElseThrow(() -> {
-            log.error("При добавлении друзей, не найден пользователь с id {}", friendUserId);
-            return new NoDataFoundException("При добавлении друзей, не найден пользователь с id " + friendUserId);
+            log.error("При добавлении друзей, не найден друг с id {}", friendUserId);
+            return new NoDataFoundException("При добавлении друзей, не найден друг с id " + friendUserId);
         });
 
         Set<Long> currentFriends = userFriendStorage.findFriendIdByUserId(userId);
@@ -86,25 +86,25 @@ public class UserServiceImpl implements UserService {
             log.info("Пользователю {} успешно добавлен новый друг {}", userId, friendUserId);
         }
 
-        userStorage.get(userId).orElseThrow(() -> {
+        User user = userStorage.get(userId).orElseThrow(() -> {
             log.error("Ошибка при получении обновленного пользователя с id {}", userId);
             return new NoDataFoundException("Пользователь с id " + userId + " не найден после обновления");
         });
 
-        return userMapper.toUserDTO(userStorage.get(userId).get());
+        return userMapper.toUserDTO(user);
     }
 
     @Override
     public void deleteFriend(Long userId, Long friendUserId) {
 
-        User user = userStorage.get(userId).orElseThrow(() -> {
+        userStorage.get(userId).orElseThrow(() -> {
             log.error("При удалении друзей, не найден пользователь с id {}", userId);
             return new NoDataFoundException("При удалении друзей, не найден пользователь с id " + userId);
         });
 
         userStorage.get(friendUserId).orElseThrow(() -> {
-            log.error("При удалении друзей, не найден пользователь с id {}", friendUserId);
-            return new NoDataFoundException("При удалении друзей, не найден пользователь с id " + friendUserId);
+            log.error("При удалении друзей, не найден друг с id {}", friendUserId);
+            return new NoDataFoundException("При удалении друзей, не найден друг с id " + friendUserId);
         });
 
         userFriendStorage.deleteByUserId(userId, friendUserId);
@@ -166,9 +166,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Collection<FilmDTO> findRecommendations(Long userId) {
-        User user = userStorage.get(userId).orElseThrow(() -> {
-            log.error("При поиске друзей, не найден пользователь с id {}", userId);
-            return new NoDataFoundException("При поиске друзей, не найден пользователь с id " + userId);
+        userStorage.get(userId).orElseThrow(() -> {
+            log.error("При поиске рекомендаций, не найден пользователь с id {}", userId);
+            return new NoDataFoundException("При поиске рекомендаций, не найден пользователь с id " + userId);
         });
 
         return filmStorage.findRecommendations(userId).stream().map(filmMapper::toFilmDTO).collect(Collectors.toSet());

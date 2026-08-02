@@ -119,15 +119,15 @@ public class ReviewServiceImpl implements ReviewService {
         log.info("Удален дизлайк к отзыву с id = {} от пользователя с id = {}", reviewId, userId);
     }
 
-    private User getUserById(Long userId) {
-        return userStorage.get(userId).orElseThrow(() -> {
+    private void getUserById(Long userId) {
+        userStorage.get(userId).orElseThrow(() -> {
             log.error("При работе с отзывами не найден пользователь с id {}", userId);
             return new NoDataFoundException("Пользователь с id = " + userId + " не найден");
         });
     }
 
-    private Film getFilmById(Long filmId) {
-        return filmStorage.get(filmId).orElseThrow(() -> {
+    private void getFilmById(Long filmId) {
+        filmStorage.get(filmId).orElseThrow(() -> {
             log.error("При работе с отзывами не найден фильм с id {}", filmId);
             return new NoDataFoundException("Фильм с id = " + filmId + " не найден");
         });

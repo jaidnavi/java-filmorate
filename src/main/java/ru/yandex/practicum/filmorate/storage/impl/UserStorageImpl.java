@@ -108,7 +108,7 @@ public class UserStorageImpl implements UserStorage {
         }
 
 
-        return users.stream().findFirst();
+        return Optional.empty();
     }
 
     @Override
