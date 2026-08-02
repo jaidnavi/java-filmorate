@@ -6,7 +6,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.dto.UserDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UserTest {
+public class UserDTOTest {
     private Validator validator;
 
     @BeforeEach
@@ -27,20 +27,20 @@ public class UserTest {
 
     @Test
     void shouldValidateCorrectUser() {
-        User user = User.builder()
+        UserDTO user = UserDTO.builder()
                 .email("test@yandex.ru")
                 .login("valid_login")
                 .name("kosticin")
                 .birthday(LocalDate.of(1984, 6, 6))
                 .build();
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<UserDTO>> violations = validator.validate(user);
         assertTrue(violations.isEmpty());
     }
 
     @Test
     void shouldFailWhenEmailIsEmpty() {
-        User user = User.builder()
+        UserDTO user = UserDTO.builder()
                 .email("           ")
                 .login("valid_login")
                 .name("kosticin")
@@ -48,7 +48,7 @@ public class UserTest {
                 .build();
 
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<UserDTO>> violations = validator.validate(user);
 
         assertEquals(2, violations.size());
 
@@ -63,7 +63,7 @@ public class UserTest {
 
     @Test
     void shouldFailWhenEmailNotEmail() {
-        User user = User.builder()
+        UserDTO user = UserDTO.builder()
                 .email("mail.ru")
                 .login("valid_login")
                 .name("kosticin")
@@ -71,7 +71,7 @@ public class UserTest {
                 .build();
 
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<UserDTO>> violations = validator.validate(user);
 
         assertEquals(1, violations.size());
 
@@ -82,7 +82,7 @@ public class UserTest {
 
     @Test
     void shouldFailWhenLoginIsEmpty() {
-        User user = User.builder()
+        UserDTO user = UserDTO.builder()
                 .email("test@yandex.ru")
                 .login("")
                 .name("kosticin")
@@ -90,7 +90,7 @@ public class UserTest {
                 .build();
 
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<UserDTO>> violations = validator.validate(user);
 
         assertEquals(1, violations.size());
 
@@ -101,7 +101,7 @@ public class UserTest {
 
     @Test
     void shouldFailWhenLoginContainsSpace() {
-        User user = User.builder()
+        UserDTO user = UserDTO.builder()
                 .email("test@yandex.ru")
                 .login("dolore ullamco")
                 .name("kosticin")
@@ -109,7 +109,7 @@ public class UserTest {
                 .build();
 
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<UserDTO>> violations = validator.validate(user);
 
         assertEquals(1, violations.size());
 
@@ -120,7 +120,7 @@ public class UserTest {
 
     @Test
     void shouldFailWhenBirthdayInFuture() {
-        User user = User.builder()
+        UserDTO user = UserDTO.builder()
                 .email("test@yandex.ru")
                 .login("dolore_ullamco")
                 .name("kosticin")
@@ -128,7 +128,7 @@ public class UserTest {
                 .build();
 
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<UserDTO>> violations = validator.validate(user);
 
         assertEquals(1, violations.size());
 

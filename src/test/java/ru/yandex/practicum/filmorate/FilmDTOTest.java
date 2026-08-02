@@ -6,7 +6,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FilmTest {
+public class FilmDTOTest {
 
     private Validator validator;
 
@@ -28,7 +28,7 @@ public class FilmTest {
 
     @Test
     void shouldValidateCorrectFilm() {
-        Film film = Film.builder()
+        FilmDTO film = FilmDTO.builder()
                 .name("Inception")
                 .description("A thief who steals corporate secrets...")
                 .releaseDate(LocalDate.of(2010, 7, 16))
@@ -38,13 +38,13 @@ public class FilmTest {
                         .build())
                 .build();
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Set<ConstraintViolation<FilmDTO>> violations = validator.validate(film);
         assertTrue(violations.isEmpty());
     }
 
     @Test
     void shouldFailWhenNameIsEmpty() {
-        Film film = Film.builder()
+        FilmDTO film = FilmDTO.builder()
                 .name("   ")
                 .releaseDate(LocalDate.of(2010, 7, 16))
                 .duration(148)
@@ -53,7 +53,7 @@ public class FilmTest {
                         .build())
                 .build();
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Set<ConstraintViolation<FilmDTO>> violations = validator.validate(film);
 
         assertEquals(1, violations.size());
         assertEquals("Название фильма не может быть пустым",
@@ -62,7 +62,7 @@ public class FilmTest {
 
     @Test
     void shouldFailWhenDescriptionSizeOver200() {
-        Film film = Film.builder()
+        FilmDTO film = FilmDTO.builder()
                 .description("Пятеро друзей ( комик-группа «Шарло»), приезжают в город Бризуль. Здесь они хотят разыскать господина Огюста Куглова, который задолжал им деньги, а именно 20 миллионов. о Куглов, который за время «своего отсутствия», стал кандидатом Коломбани.")
                 .name("Film name")
                 .releaseDate(LocalDate.of(2010, 7, 16))
@@ -72,16 +72,16 @@ public class FilmTest {
                         .build())
                 .build();
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Set<ConstraintViolation<FilmDTO>> violations = validator.validate(film);
 
         assertEquals(1, violations.size());
-        assertEquals("Максимальная длина описания - 200 символов",
+        assertEquals("Длина описания должна быть максимум 200 символов",
                 violations.iterator().next().getMessage());
     }
 
     @Test
     void shouldFailWhenReleaseDateNotValid() {
-        Film film = Film.builder()
+        FilmDTO film = FilmDTO.builder()
                 .description("Description")
                 .name("Name")
                 .releaseDate(LocalDate.of(1800, 7, 16))
@@ -91,16 +91,16 @@ public class FilmTest {
                         .build())
                 .build();
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Set<ConstraintViolation<FilmDTO>> violations = validator.validate(film);
 
         assertEquals(1, violations.size());
-        assertEquals("Дата релиза — не раньше 28 декабря 1895 года",
+        assertEquals("Дата релиза должна быть не ранее 28.12.1895",
                 violations.iterator().next().getMessage());
     }
 
     @Test
     void shouldFailWhenDurationNegative() {
-        Film film = Film.builder()
+        FilmDTO film = FilmDTO.builder()
                 .description("Description")
                 .name("Name")
                 .releaseDate(LocalDate.of(2010, 7, 16))
@@ -110,7 +110,7 @@ public class FilmTest {
                         .build())
                 .build();
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        Set<ConstraintViolation<FilmDTO>> violations = validator.validate(film);
 
         assertEquals(1, violations.size());
         assertEquals("Продолжительность фильма должна быть положительным числом",
