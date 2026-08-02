@@ -14,7 +14,7 @@ public interface FilmMapper {
 
     Film toFilm(FilmDTO filmDTO);
 
-    Collection<FilmDTO> toFilmDTOCollection(Collection<Film> filmDTOs);
+    Collection<FilmDTO> toFilmDTOCollection(Collection<Film> films);
 
     // Используйте default метод для Optional
     default Optional<FilmDTO> toOptionalFilmDTO(Optional<Film> optionalFilm) {

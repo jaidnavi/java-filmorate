@@ -3,9 +3,12 @@ package ru.yandex.practicum.filmorate.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
+import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.EventType;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.OperationType;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.EventsService;
@@ -24,37 +27,43 @@ public class UserServiceImpl implements UserService {
     private final UserFriendStorage userFriendStorage;
     private final FilmStorage filmStorage;
     private final EventsService eventsService;
+    private final UserMapper userMapper;
+    private final FilmMapper filmMapper;
 
     @Autowired
-    public UserServiceImpl(UserStorage userStorage, UserFriendStorage userFriendStorage, FilmStorage filmStorage, EventsService eventsService) {
+    public UserServiceImpl(UserStorage userStorage, UserFriendStorage userFriendStorage, FilmStorage filmStorage, EventsService eventsService, UserMapper userMapper, FilmMapper filmMapper) {
         this.userStorage = userStorage;
         this.userFriendStorage = userFriendStorage;
         this.filmStorage = filmStorage;
         this.eventsService = eventsService;
+        this.userMapper = userMapper;
+        this.filmMapper = filmMapper;
     }
 
     @Override
-    public User create(User user) {
-        return userStorage.create(user);
+    public UserDTO create(UserDTO userDTO) {
+        User user = userMapper.toUser(userDTO);
+        return userMapper.toUserDTO(userStorage.create(user));
     }
 
     @Override
-    public User update(User newUser) {
-        return userStorage.update(newUser);
+    public UserDTO update(UserDTO userDTO) {
+        User user = userMapper.toUser(userDTO);
+        return userMapper.toUserDTO(userStorage.update(user));
     }
 
     @Override
-    public Collection<User> findAll() {
-        return userStorage.findAll();
+    public Collection<UserDTO> findAll() {
+        return userMapper.toUserDTOCollection(userStorage.findAll());
     }
 
     @Override
-    public Optional<User> get(Long userId) {
-        return userStorage.get(userId);
+    public Optional<UserDTO> get(Long userId) {
+        return userMapper.toOptionalUserDTO(userStorage.get(userId));
     }
 
     @Override
-    public User addFriend(Long userId, Long friendUserId) {
+    public UserDTO addFriend(Long userId, Long friendUserId) {
         User user = userStorage.get(userId).orElseThrow(() -> {
             log.error("При добавлении друзей, не найден пользователь с id {}", userId);
             return new NoDataFoundException("При добавлении друзей, не найден пользователь с id " + userId);
@@ -77,14 +86,16 @@ public class UserServiceImpl implements UserService {
             log.info("Пользователю {} успешно добавлен новый друг {}", userId, friendUserId);
         }
 
-        return userStorage.get(userId).orElseThrow(() -> {
+        userStorage.get(userId).orElseThrow(() -> {
             log.error("Ошибка при получении обновленного пользователя с id {}", userId);
             return new NoDataFoundException("Пользователь с id " + userId + " не найден после обновления");
         });
+
+        return userMapper.toUserDTO(userStorage.get(userId).get());
     }
 
     @Override
-    public User deleteFriend(Long userId, Long friendUserId) {
+    public void deleteFriend(Long userId, Long friendUserId) {
 
         User user = userStorage.get(userId).orElseThrow(() -> {
             log.error("При удалении друзей, не найден пользователь с id {}", userId);
@@ -100,12 +111,12 @@ public class UserServiceImpl implements UserService {
         eventsService.addNewEvent(userId, EventType.FRIEND, friendUserId, OperationType.REMOVE);
         log.info("Пользователю {} успешно удален друг {}", userId, friendUserId);
 
-        return userStorage.get(userId).orElseThrow(() ->
+        userStorage.get(userId).orElseThrow(() ->
                 new NoDataFoundException("Пользователь не найден после удаления друга"));
     }
 
     @Override
-    public List<User> findFriends(Long userId) {
+    public Collection<UserDTO> findFriends(Long userId) {
 
         User user = userStorage.get(userId).orElseThrow(() -> {
             log.error("При поиске друзей, не найден пользователь с id {}", userId);
@@ -119,11 +130,12 @@ public class UserServiceImpl implements UserService {
         return user.getFriends().stream()
                 .map(userStorage::get)
                 .flatMap(Optional::stream)
+                .map(userMapper::toUserDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Set<User> findCommonFriends(Long userId, Long otherId) {
+    public Set<UserDTO> findCommonFriends(Long userId, Long otherId) {
         Set<Long> userFriends = userStorage.get(userId)
                 .map(User::getFriends)
                 .orElseThrow(() -> new NoDataFoundException("Пользователь с id " + userId + " не найден"));
@@ -148,17 +160,18 @@ public class UserServiceImpl implements UserService {
                 .filter(otherFriends::contains)
                 .map(userStorage::get)
                 .flatMap(Optional::stream)
+                .map(userMapper::toUserDTO)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public Collection<Film> findRecommendations(Long userId) {
+    public Collection<FilmDTO> findRecommendations(Long userId) {
         User user = userStorage.get(userId).orElseThrow(() -> {
             log.error("При поиске друзей, не найден пользователь с id {}", userId);
             return new NoDataFoundException("При поиске друзей, не найден пользователь с id " + userId);
         });
 
-        return filmStorage.findRecommendations(userId);
+        return filmStorage.findRecommendations(userId).stream().map(filmMapper::toFilmDTO).collect(Collectors.toSet());
     }
 
     @Override

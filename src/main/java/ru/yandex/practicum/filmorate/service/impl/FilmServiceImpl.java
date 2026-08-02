@@ -74,7 +74,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film addLike(Long filmId, Long userId) {
+    public void addLike(Long filmId, Long userId) {
         // 1. Проверяем существование фильма и пользователя (иначе честная 404)
         filmStorage.get(filmId).orElseThrow(() -> {
             log.error("При добавлении лайка, не найден фильм с id {}", filmId);
@@ -92,13 +92,10 @@ public class FilmServiceImpl implements FilmService {
 
         // 3. Фиксируем событие в ленту
         eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.ADD);
-
-        // 4. Возвращаем полностью обновленный и свежий объект фильма из БД для прохождения тестов
-        return filmStorage.get(filmId).orElseThrow();
     }
 
     @Override
-    public Film deleteLike(Long filmId, Long userId) {
+    public void deleteLike(Long filmId, Long userId) {
         // 1. Проверяем существование фильма и пользователя
         filmStorage.get(filmId).orElseThrow(() -> {
             log.error("При удалении лайка, не найден фильм с id {}", filmId);
@@ -116,9 +113,6 @@ public class FilmServiceImpl implements FilmService {
 
         // 3. Фиксируем событие в ленту
         eventsService.addNewEvent(userId, EventType.LIKE, filmId, OperationType.REMOVE);
-
-        // 4. Возвращаем свежий фильм из БД
-        return filmStorage.get(filmId).orElseThrow();
     }
 
     @Override
