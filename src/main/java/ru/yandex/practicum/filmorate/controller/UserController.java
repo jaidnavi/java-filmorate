@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.model.Events;
-import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
@@ -21,7 +20,6 @@ import java.util.Set;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    private final EventsService eventsService;
 
     @GetMapping("/{id}")
     public UserDTO find(@PathVariable("id") long userId) {
@@ -73,7 +71,7 @@ public class UserController {
      */
     @GetMapping("/{id}/feed")
     public Collection<Events> getFeedByUserId(@PathVariable("id") long userId) {
-        return eventsService.getFeedByUserId(userId);
+        return userService.getFeedByUserId(userId);
     }
 
     /**
@@ -83,7 +81,7 @@ public class UserController {
      */
     @GetMapping("/feed")
     public Collection<Events> getAllFeed() {
-        return eventsService.getAllFeed();
+        return userService.getAllFeed();
     }
 
     @GetMapping("/{id}/recommendations")

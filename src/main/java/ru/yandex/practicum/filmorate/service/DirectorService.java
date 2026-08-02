@@ -1,19 +1,19 @@
 package ru.yandex.practicum.filmorate.service;
 
-import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.dto.DirectorDTO;
 
 import java.util.Collection;
 import java.util.Optional;
 
 public interface DirectorService {
 
-    Collection<Director> findAll();
+    Collection<DirectorDTO> findAll();
 
-    Optional<Director> get(Long directorId);
+    Optional<DirectorDTO> get(Long directorId);
 
-    Director create(Director director);
+    DirectorDTO create(DirectorDTO directorDTO);
 
-    Director update(Director newDirector);
+    DirectorDTO update(DirectorDTO directorDTO);
 
     void delete(Long directorId);
 

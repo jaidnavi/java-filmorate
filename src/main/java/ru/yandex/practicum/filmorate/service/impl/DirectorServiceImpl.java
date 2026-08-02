@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.DirectorDTO;
+import ru.yandex.practicum.filmorate.mapper.DirectorMapper;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
@@ -15,30 +17,34 @@ import java.util.Optional;
 @Service
 public class DirectorServiceImpl implements DirectorService {
     public final DirectorStorage directorStorage;
+    private final DirectorMapper directorMapper;
 
     @Autowired
-    public DirectorServiceImpl(DirectorStorage directorStorage) {
+    public DirectorServiceImpl(DirectorStorage directorStorage, DirectorMapper directorMapper) {
         this.directorStorage = directorStorage;
+        this.directorMapper = directorMapper;
     }
 
     @Override
-    public Collection<Director> findAll() {
-        return directorStorage.findAll();
+    public Collection<DirectorDTO> findAll() {
+        return directorMapper.toDirectorDTOCollection(directorStorage.findAll());
     }
 
     @Override
-    public Optional<Director> get(Long directorId) {
-        return directorStorage.get(directorId);
+    public Optional<DirectorDTO> get(Long directorId) {
+        return directorStorage.get(directorId).map(directorMapper::toDirectorDTO);
     }
 
     @Override
-    public Director create(Director director) {
-        return directorStorage.create(director);
+    public DirectorDTO create(DirectorDTO directorDTO) {
+        Director director = directorMapper.toDirector(directorDTO);
+        return directorMapper.toDirectorDTO(directorStorage.create(director));
     }
 
     @Override
-    public Director update(Director newDirector) {
-        return directorStorage.update(newDirector);
+    public DirectorDTO update(DirectorDTO directorDTO) {
+        Director director = directorMapper.toDirector(directorDTO);
+        return directorMapper.toDirectorDTO(directorStorage.update(director));
     }
 
     @Override

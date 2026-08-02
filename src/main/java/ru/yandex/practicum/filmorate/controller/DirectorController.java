@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dto.DirectorDTO;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
-import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorService;
 
 import java.util.Collection;
@@ -19,24 +19,24 @@ public class DirectorController {
     private final DirectorService directorService;
 
     @PostMapping
-    public Director create(@Valid @RequestBody Director director) {
-        return directorService.create(director);
+    public DirectorDTO create(@Valid @RequestBody DirectorDTO directorDTO) {
+        return directorService.create(directorDTO);
     }
 
     @GetMapping
-    public Collection<Director> findAll() {
+    public Collection<DirectorDTO> findAll() {
         return directorService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Director find(@PathVariable("id") long directorId) {
+    public DirectorDTO find(@PathVariable("id") long directorId) {
         return directorService.get(directorId)
                 .orElseThrow(() -> new NoDataFoundException("Режиссер с id " + directorId + " не найден"));
     }
 
     @PutMapping
-    public Director update(@Valid @RequestBody Director director) {
-        return directorService.update(director);
+    public DirectorDTO update(@Valid @RequestBody DirectorDTO directorDTO) {
+        return directorService.update(directorDTO);
     }
 
     @DeleteMapping("/{id}")

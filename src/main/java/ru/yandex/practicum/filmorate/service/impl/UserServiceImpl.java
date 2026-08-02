@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Events;
 import ru.yandex.practicum.filmorate.model.OperationType;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.EventsService;
@@ -179,4 +180,13 @@ public class UserServiceImpl implements UserService {
         userStorage.delete(userId);
     }
 
+    @Override
+    public Collection<Events> getAllFeed() {
+        return eventsService.getAllFeed();
+    }
+
+    @Override
+    public Collection<Events> getFeedByUserId(Long userId) {
+        return eventsService.getFeedByUserId(userId);
+    }
 }

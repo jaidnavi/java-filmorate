@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.dto.UserDTO;
+import ru.yandex.practicum.filmorate.model.Events;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -29,4 +30,8 @@ public interface UserService {
     Collection<FilmDTO> findRecommendations(Long userId);
 
     void delete(Long userId);
+
+    Collection<Events> getAllFeed();
+
+    Collection<Events> getFeedByUserId(Long userId);
 }
