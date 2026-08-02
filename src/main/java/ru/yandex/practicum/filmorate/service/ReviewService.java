@@ -9,8 +9,6 @@ public interface ReviewService {
 
     ReviewDTO update(ReviewDTO reviewDTO);
 
-    Collection<ReviewDTO> findAll(int count);
-
     Collection<ReviewDTO> findReviewsByFilmId(Long filmId, int count);
 
     ReviewDTO get(Long reviewId);

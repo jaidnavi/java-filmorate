@@ -58,14 +58,16 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Collection<ReviewDTO> findAll(int count) {
-        return reviewMapper.toReviewDTOCollection(reviewStorage.findAll(count));
-    }
-
-    @Override
     public Collection<ReviewDTO> findReviewsByFilmId(Long filmId, int count) {
-        getFilmById(filmId);
-        return reviewMapper.toReviewDTOCollection(reviewStorage.findReviewsByFilmId(filmId, count));
+        if (count < 1) {
+            throw new ValidationException("Не корректное значение параметра count");
+        }
+        if (filmId == null) {
+            return reviewMapper.toReviewDTOCollection(reviewStorage.findAll(count));
+        } else {
+            getFilmById(filmId);
+            return reviewMapper.toReviewDTOCollection(reviewStorage.findReviewsByFilmId(filmId, count));
+        }
     }
 
     @Override
