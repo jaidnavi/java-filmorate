@@ -1,4 +1,5 @@
 package ru.yandex.practicum.filmorate.mapper;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import ru.yandex.practicum.filmorate.dto.MpaDTO;
@@ -10,6 +11,7 @@ import java.util.Collection;
 public interface MpaMapper {
 
     MpaMapper INSTANCE = Mappers.getMapper(MpaMapper.class);
+
     MpaDTO toMpaDTO(Mpa mpa);
 
     Collection<MpaDTO> toMpaDTOCollection(Collection<Mpa> mpas);
