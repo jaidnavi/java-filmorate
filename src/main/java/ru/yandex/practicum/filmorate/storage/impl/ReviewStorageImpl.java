@@ -81,7 +81,7 @@ public class ReviewStorageImpl implements ReviewStorage {
                 "LIMIT ?";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
-            Review review = mapRowToReview(rs, rowNum);
+            Review review = mapRowToReview(rs);
 
             review.setUseful(rs.getInt("useful"));
 
@@ -102,7 +102,7 @@ public class ReviewStorageImpl implements ReviewStorage {
                 "LIMIT ?";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
-            Review review = mapRowToReview(rs, rowNum);
+            Review review = mapRowToReview(rs);
 
             review.setUseful(rs.getInt("useful"));
 
@@ -122,12 +122,12 @@ public class ReviewStorageImpl implements ReviewStorage {
 
         try {
             Review review = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
-                Review r = mapRowToReview(rs, rowNum);
+                Review r = mapRowToReview(rs);
                 r.setUseful(rs.getInt("useful"));
                 return r;
             }, reviewId);
 
-            return Optional.of(review);
+            return Optional.ofNullable(review);
         } catch (EmptyResultDataAccessException ignored) {
             return Optional.empty();
         }
@@ -142,7 +142,7 @@ public class ReviewStorageImpl implements ReviewStorage {
         }
     }
 
-    private Review mapRowToReview(ResultSet rs, int rowNum) throws SQLException {
+    private Review mapRowToReview(ResultSet rs) throws SQLException {
         Review review = new Review();
         review.setReviewId(rs.getLong("review_id"));
         review.setContent(rs.getString("content"));

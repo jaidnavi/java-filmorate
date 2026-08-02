@@ -44,7 +44,7 @@ public class UserFriendStorageImpl implements UserFriendStorage {
                 AND friend_id = ?
                 """;
 
-        int rowsAffected = jdbcTemplate.update(
+        jdbcTemplate.update(
                 sql,
                 userId,
                 friendId

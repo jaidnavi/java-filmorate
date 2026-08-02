@@ -2,9 +2,7 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.storage.FilmDirectorStorage;
@@ -16,7 +14,6 @@ import java.util.Set;
 @Component
 public class FilmDirectorStorageImpl implements FilmDirectorStorage {
     private final JdbcTemplate jdbcTemplate;
-    private static final RowMapper<Director> DIRECTOR_MAPPER = new DataClassRowMapper<>(Director.class);
     private static final String INSERT = "MERGE INTO film_directors (film_id, director_id) " +
                                                 "KEY (film_id, director_id) " +
                                              "VALUES (?, ?)";

@@ -37,7 +37,7 @@ public class FilmStorageImpl implements FilmStorage {
 
     @Autowired
     public FilmStorageImpl(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-                           GenreRefStorage genreRefStorage, FilmLikeStorage filmLikeStorage,
+                           GenreRefStorage genreRefStorage,
                            MpaStorage mpaStorage, GenreStorage genreStorage, FilmDirectorStorage filmDirectorStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreRefStorage = genreRefStorage;

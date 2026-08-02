@@ -5,13 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
+import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
-import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Events;
-import ru.yandex.practicum.filmorate.model.OperationType;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.EventsService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
@@ -23,50 +20,46 @@ import java.util.Set;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    private final EventsService eventsService;
 
     @GetMapping("/{id}")
-    public User find(@PathVariable("id") long userId) {
+    public UserDTO find(@PathVariable("id") long userId) {
         return userService.get(userId)
                 .orElseThrow(() -> new NoDataFoundException("Пользователь с id " + userId + " не найден"));
     }
 
     @GetMapping
-    public Collection<User> findAll() {
+    public Collection<UserDTO> findAll() {
         return userService.findAll();
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User user) {
-        return userService.create(user);
+    public UserDTO create(@Valid @RequestBody UserDTO userDTO) {
+        return userService.create(userDTO);
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user) {
-        return userService.update(user);
+    public UserDTO update(@Valid @RequestBody UserDTO userDTO) {
+        return userService.update(userDTO);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
-        User user = userService.addFriend(userId, friendId);
-        eventsService.addNewEvent(userId, EventType.FRIEND, friendId, OperationType.ADD);
-        return user;
+    public UserDTO addFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
+        return userService.addFriend(userId, friendId);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable("id") long userId, @PathVariable("friendId") long friendId) {
         userService.deleteFriend(userId, friendId);
-        eventsService.addNewEvent(userId, EventType.FRIEND, friendId, OperationType.REMOVE);
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> findFriends(@PathVariable("id") long userId) {
+    public Collection<UserDTO> findFriends(@PathVariable("id") long userId) {
         return userService.findFriends(userId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Set<User> findCommonFriends(@PathVariable("id") long userId, @PathVariable("otherId") long otherId) {
+    public Set<UserDTO> findCommonFriends(@PathVariable("id") long userId, @PathVariable("otherId") long otherId) {
         return userService.findCommonFriends(userId, otherId);
     }
 
@@ -78,7 +71,7 @@ public class UserController {
      */
     @GetMapping("/{id}/feed")
     public Collection<Events> getFeedByUserId(@PathVariable("id") long userId) {
-        return eventsService.getFeedByUserId(userId);
+        return userService.getFeedByUserId(userId);
     }
 
     /**
@@ -88,11 +81,11 @@ public class UserController {
      */
     @GetMapping("/feed")
     public Collection<Events> getAllFeed() {
-        return eventsService.getAllFeed();
+        return userService.getAllFeed();
     }
 
     @GetMapping("/{id}/recommendations")
-    public Collection<Film> findCommonFriends(@PathVariable("id") long userId) {
+    public Collection<FilmDTO> findCommonFriends(@PathVariable("id") long userId) {
         return userService.findRecommendations(userId);
     }
 

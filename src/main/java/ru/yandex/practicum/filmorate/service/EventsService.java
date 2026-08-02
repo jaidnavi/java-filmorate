@@ -1,62 +1,17 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Events;
 import ru.yandex.practicum.filmorate.model.OperationType;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.EventsStorage;
 
 import java.util.Collection;
-import java.util.Optional;
 
-@Slf4j
-@Service
-public class EventsService {
-    private final EventsStorage eventsStorage;
-    private final UserService userService;
+public interface EventsService {
 
-    @Autowired
-    public EventsService(EventsStorage eventsStorage, UserService userService) {
-        this.eventsStorage = eventsStorage;
-        this.userService = userService;
-    }
+    void addNewEvent(Long userId, EventType eventType, Long entityId, OperationType operation);
 
-    public void addNewEvent(Long userId, EventType eventType, Long entityId, OperationType operation) {
-        if (userId != null) {
-            Optional<User> user = userService.get(userId);
-            if (user.isEmpty()) {
-                throw new NoDataFoundException("Пользователь с id " + userId + " не найден");
-            }
-        } else {
-            throw new ValidationException("Не указан идентификатор пользователя");
-        }
-        if (eventType == null) {
-            throw new ValidationException("Не указан тип события");
-        }
-        if (entityId == null) {
-            throw new ValidationException("Не указан идентификатор сущности события");
-        }
-        if (operation == null) {
-            throw new ValidationException("Не указан код операции для события");
-        }
-        eventsStorage.addNewEvent(userId, eventType, entityId, operation);
-    }
+    Collection<Events> getFeedByUserId(Long userId);
 
-    public Collection<Events> getFeedByUserId(Long userId) {
-        Optional<User> user = userService.get(userId);
-        if (user.isPresent()) {
-            return eventsStorage.getFeedByUserId(userId);
-        } else {
-            throw new NoDataFoundException("Пользователь с id " + userId + " не найден");
-        }
-    }
+    Collection<Events> getAllFeed();
 
-    public Collection<Events> getAllFeed() {
-        return eventsStorage.getAllFeed();
-    }
 }

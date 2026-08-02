@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreRefStorage;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -42,12 +40,7 @@ public class GenreRefStorageImpl implements GenreRefStorage {
         );
     }
 
-    private Genre mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
-        Genre genre = new Genre();
-        genre.setId(rs.getLong("genre_id"));
-        genre.setName(rs.getString("genre"));
-        return genre;
-    }
+
 
     @Override
     public void addGenresToFilm(Set<Genre> genres, Long filmId) {
