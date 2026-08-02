@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.DirectorDTO;
 import ru.yandex.practicum.filmorate.mapper.DirectorMapper;
@@ -15,15 +15,10 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class DirectorServiceImpl implements DirectorService {
     public final DirectorStorage directorStorage;
     private final DirectorMapper directorMapper;
-
-    @Autowired
-    public DirectorServiceImpl(DirectorStorage directorStorage, DirectorMapper directorMapper) {
-        this.directorStorage = directorStorage;
-        this.directorMapper = directorMapper;
-    }
 
     @Override
     public Collection<DirectorDTO> findAll() {

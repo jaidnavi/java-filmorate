@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.dto.ReviewDTO;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import java.util.Collection;
@@ -26,27 +26,27 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public Review create(@Valid @RequestBody Review review) {
-        return reviewService.create(review);
+    public ReviewDTO create(@Valid @RequestBody ReviewDTO reviewDTO) {
+        return reviewService.create(reviewDTO);
     }
 
     @PutMapping
-    public Review update(@Valid @RequestBody Review review) {
-        return reviewService.update(review);
+    public ReviewDTO update(@Valid @RequestBody ReviewDTO reviewDTO) {
+        return reviewService.update(reviewDTO);
     }
 
     @DeleteMapping("/{id}")
     public void deleteReviewById(@PathVariable("id") Long reviewId) {
-        Review review = reviewService.deleteReviewById(reviewId);
+        reviewService.deleteReviewById(reviewId);
     }
 
     @GetMapping("/{id}")
-    public Review get(@PathVariable("id") Long reviewId) {
+    public ReviewDTO get(@PathVariable("id") Long reviewId) {
         return reviewService.get(reviewId);
     }
 
     @GetMapping
-    public Collection<Review> findReviewsByFilmId(@RequestParam(required = false) Long filmId,
+    public Collection<ReviewDTO> findReviewsByFilmId(@RequestParam(required = false) Long filmId,
                                                   @RequestParam(defaultValue = "10") @Min(1) int count) {
         if (filmId == null) {
             return reviewService.findAll(count);
