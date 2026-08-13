@@ -12,7 +12,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,17 +99,31 @@ public class UserStorageImpl implements UserStorage {
         if (!users.isEmpty()) {
             User user = users.get(0);
 
-            String sqlFriends = "SELECT friend_id FROM user_friends WHERE user_id = ? AND friend_id IS NOT NULL";
+            String sqlFriends = "SELECT friend_id FROM user_friends WHERE user_id = ? AND friend_id IS NOT NULL ORDER BY friend_id ASC";
             List<Long> friendIds = jdbcTemplate.queryForList(sqlFriends, Long.class, userId);
 
-            user.setFriends(new HashSet<>(friendIds));
+            user.setFriends(new LinkedHashSet<>(friendIds));
 
             return Optional.of(user);
         }
 
 
-        return users.stream().findFirst();
+        return Optional.empty();
     }
+
+    @Override
+    public void delete(Long userId) {
+        String sql = """
+                DELETE FROM users
+                WHERE user_id = ?
+                """;
+
+        jdbcTemplate.update(
+                sql,
+                userId
+        );
+    }
+
 
     public static class UserMapper implements RowMapper<User> {
         @Override

@@ -3,11 +3,8 @@ package ru.yandex.practicum.filmorate.storage.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.UserFriend;
 import ru.yandex.practicum.filmorate.storage.UserFriendStorage;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -47,7 +44,7 @@ public class UserFriendStorageImpl implements UserFriendStorage {
                 AND friend_id = ?
                 """;
 
-        int rowsAffected = jdbcTemplate.update(
+        jdbcTemplate.update(
                 sql,
                 userId,
                 friendId
@@ -84,15 +81,6 @@ public class UserFriendStorageImpl implements UserFriendStorage {
         List<Long> friendIds = jdbcTemplate.queryForList(sql, Long.class, userId);
 
         return Set.copyOf(friendIds);
-    }
-
-    private UserFriend mapRowToUserFriend(ResultSet rs, int rowNum) throws SQLException {
-        UserFriend userFriend = new UserFriend();
-
-        userFriend.setUserId(rs.getLong("user_id"));
-        userFriend.setFriendId(rs.getLong("friend_id"));
-
-        return userFriend;
     }
 
 }
